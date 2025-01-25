@@ -14,7 +14,7 @@
 #define MAX_PASS_LEN 100
 
 /* Global variables */
-bool filled[MAX_PASS_LEN];
+extern bool filled[MAX_PASS_LEN];
 
 /* Function declarations */
 bool isdigit(std::string c);
