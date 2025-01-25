@@ -2,6 +2,8 @@
 #define INVALID_INT_VAL -9999
 #define INVALID_STR_VAL "EmptyValueForColor"
 
+bool filled[MAX_PASS_LEN];
+
 bool isdigit(std::string c)
 // Given a string, return true if all of its characters are digits
 {
@@ -55,19 +57,12 @@ void fill_bytwo(bool arr[], int pos)
 }
 
 /* Class definitions */
-class Rand_int {
-private:
-    std::random_device rd;
-    std::default_random_engine engine;
-    std::uniform_int_distribution<int> distrib;
-public:
-    Rand_int(int low, int high) : distrib{low, high} {
+Rand_int::Rand_int(int low, int high) : distrib{low, high} {
         engine.seed(rd());
     }
-    int operator()() {
+int Rand_int::operator()() {
         return distrib(engine);
     }
-};
 
 std::string generatePassword(int length, int year, std::string fcolor)
 // given any combination of arguments, or none, generate a random
@@ -82,14 +77,15 @@ std::string generatePassword(int length, int year, std::string fcolor)
     bool year_flag   = year   == INVALID_INT_VAL ? false : true;
     bool fcolor_flag = fcolor == INVALID_STR_VAL ? false : true;
 
+    /* Begin password creation with a set or default length (no year or color yet) */
     int passlen = len_flag ? length : 12;                                               // if length is set by the user, use it. Otherwise, use 12
-    /* Allow for the random selection of the type of character */
+    // Allow for the random selection of the type of character
     Rand_int rfor_alphabet(0, alphabet.size()-1);                                       // create a generator for the alphabet data size
     Rand_int rfor_numsymbol(0, numsymbol.size()-1);                                     // create a generator for the number/symbol data size
     Rand_int rfor_candidate(0, 1000);
     char candidates[3] {0,0,0};                                                         // hold, in each iteration, 3 different chars of different type: small, capital & num/sym
-    if (passlen_flag == true) {
-        for (int i = 0; i < pass_len; ++i) {
+    if (passlen != INVALID_INT_VAL) {
+        for (int i = 0; i < passlen; ++i) {
             candidates[0] = alphabet[rfor_alphabet()];
             candidates[1] = alphabet_capital[rfor_alphabet()];
             candidates[2] = numsymbol[rfor_numsymbol()];
