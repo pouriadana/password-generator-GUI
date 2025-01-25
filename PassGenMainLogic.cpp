@@ -1,4 +1,6 @@
 #include "PassGenMainLogic.h"
+#define INVALID_INT_VAL -9999
+#define INVALID_STR_VAL "EmptyValueForColor"
 
 bool isdigit(std::string c)
 // Given a string, return true if all of its characters are digits
@@ -66,3 +68,35 @@ public:
         return distrib(engine);
     }
 };
+
+std::string generatePassword(int length, int year, std::string fcolor)
+// given any combination of arguments, or none, generate a random
+// meaningfull password with a default length of 12
+{
+    const std::string alphabet {"abcdefghijklmnopqrstuvwxyz"};                          // length == 26
+    const std::string alphabet_capital {"ABCDEFGHIJKLMNOPQRSTUVWXYZ"};                  // length == 26
+    const std::string numsymbol {"0123456789!?<>(){}@#$%^&*"};                          // length == 25
+    std::string password;
+
+    bool len_flag    = length == INVALID_INT_VAL ? false : true;
+    bool year_flag   = year   == INVALID_INT_VAL ? false : true;
+    bool fcolor_flag = fcolor == INVALID_STR_VAL ? false : true;
+
+    int passlen = len_flag ? length : 12;                                               // if length is set by the user, use it. Otherwise, use 12
+    /* Allow for the random selection of the type of character */
+    Rand_int rfor_alphabet(0, alphabet.size()-1);                                       // create a generator for the alphabet data size
+    Rand_int rfor_numsymbol(0, numsymbol.size()-1);                                     // create a generator for the number/symbol data size
+    Rand_int rfor_candidate(0, 1000);
+    char candidates[3] {0,0,0};                                                         // hold, in each iteration, 3 different chars of different type: small, capital & num/sym
+    if (passlen_flag == true) {
+        for (int i = 0; i < pass_len; ++i) {
+            candidates[0] = alphabet[rfor_alphabet()];
+            candidates[1] = alphabet_capital[rfor_alphabet()];
+            candidates[2] = numsymbol[rfor_numsymbol()];
+            int rsubscript{rfor_candidate()%3};                                         // select one char with a distinct type from the created candidate chars
+            std::string chosen_char{candidates[rsubscript]};
+            password += chosen_char;
+        }
+    }
+    return password;
+}
