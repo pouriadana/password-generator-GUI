@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#define INVALID_INT_VAL -9999
+#define INVALID_STR_VAL "EmptyValueForColor"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -29,8 +31,8 @@ void MainWindow::on_generateButton_clicked() {
     QString color = ui->colorInput->text();
 
     // handle empty arguments
-    int length = -9999;
-    int year   = -9999;
+    int length = INVALID_INT_VAL;
+    int year   = INVALID_INT_VAL;
     if (!length_string.isEmpty()) {                             // if a length was set by the user, convert length string to int
         length = length_string.toInt();
     }
@@ -38,7 +40,7 @@ void MainWindow::on_generateButton_clicked() {
         year = year_string.toInt();
     }
     if (color.isEmpty()) {                                      // if no color was set by the user, give a specific value to color
-        color = "EmptyValueForColor";
+        color = INVALID_STR_VAL;
     }
 
     // Call your password generation logic (adjust this as needed)
