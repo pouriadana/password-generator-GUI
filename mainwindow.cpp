@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
+#include "PassGenMainLogic.h"
 #define INVALID_INT_VAL -9999
 #define INVALID_STR_VAL "EmptyValueForColor"
 
@@ -8,8 +9,6 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    connect(ui->generateButton, &QPushButton::clicked, this, &MainWindow::on_generateButton_clicked);
-
 }
 
 MainWindow::~MainWindow()
@@ -42,10 +41,10 @@ void MainWindow::on_generateButton_clicked() {
     if (color.isEmpty()) {                                      // if no color was set by the user, give a specific value to color
         color = INVALID_STR_VAL;
     }
-
+    // std::cerr << "Length: " << length;                                       // DEBUG
     // Call your password generation logic (adjust this as needed)
     std::string password = generatePassword(length, year, color.toStdString());
-
+    // std::cerr << "Password is: " << password << std::endl;                   // DEBUG
     // // Display the generated password
     ui->passwordLabel->setText(QString::fromStdString(password));
 }
