@@ -106,9 +106,27 @@ std::string generatePassword(int length, int year, std::string fcolor)
         fill_bytwo(filled, sub2);                                                       // record birth year (pair 2) position in the password
         // std::cout << '\n' << password << '\n';                                       // DEBUG
     }
+    std::cerr << password << std::endl;
 
     /* Integrate favorite color into the password */
-    if (fcolor_flag == true) {
+    if (year_flag == false && fcolor_flag == true) {                                    // this means if filled array is empty
+        Rand_int rfor_color(0, passlen - 1);                                            // Rand_int creates start-end including
+        int rotating_sub = rfor_color();
+        while(filled[rotating_sub] == true) {
+            rotating_sub = rfor_color();
+        }
+        for (int i = 0; i < fcolor.size(); ++i) {
+            if (filled[rotating_sub] == false) {
+                std::cerr << "color at sub " << i << " is " << fcolor[i]
+                          << ", rotating index is " << rotating_sub << '\n';
+                std::string temp_char{ fcolor[i]};
+                password.replace(rotating_sub, 1, temp_char);
+                filled[rotating_sub] = true;
+            }
+            rotating_sub = (rotating_sub + 1) % passlen;
+        }
+    }
+    else if (fcolor_flag == true) {
         for (int color = 0; color < fcolor.size(); ++color) {
             for (int i = 0; i < password.size(); ++i) {
                 if (filled[i] == false) {
