@@ -94,5 +94,28 @@ std::string generatePassword(int length, int year, std::string fcolor)
             password += chosen_char;
         }
     }
+    fill_arr_zero(filled, MAX_PASS_LEN);                                                // before inserting any meaning into the pass, reset all pos to 0/false
+
+    /* Integrate birthdate into the password */
+    if (year_flag == true) {                                                            // cut the birthdate into two pairs of two digits each
+        int birthdate{year};
+        int disected_birthdate[2] {0,0};
+        disected_birthdate[0] = birthdate % 100;                                        // last two digits (e.g. "94" in "1994")
+        birthdate /= 100;
+        disected_birthdate[1] = birthdate % 100;                                        // first two digits (e.g. "19" in "1994")
+        Rand_int rfor_replace(0, passlen -2);                                          // at most the subscript of the penultimate character to support a pair (two chars)
+        int sub1{0};
+        int sub2{0};
+        while (abs(sub1-sub2) < 2) {
+            sub1 = rfor_replace();
+            sub2 = rfor_replace();
+        }
+        // std::cout << sub1 << '\t' << sub2;                                           // DEBUG
+        password.replace(sub1, 2, std::to_string(disected_birthdate[1]));
+        password.replace(sub2, 2, std::to_string(disected_birthdate[0]));
+        fill_bytwo(filled, sub1);                                                       // record birth year (pair 1) position in the password
+        fill_bytwo(filled, sub2);                                                       // record birth year (pair 2) position in the password
+        // std::cout << '\n' << password << '\n';                                       // DEBUG
+    }
     return password;
 }
