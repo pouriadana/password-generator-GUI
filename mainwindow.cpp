@@ -41,7 +41,8 @@ void MainWindow::on_generateButton_clicked() {
     if (color.isEmpty()) {                                      // if no color was set by the user, give a specific value to color
         color = INVALID_STR_VAL;
     }
-    // std::cerr << "Length: " << length;                                       // DEBUG
+    std::cerr << "Length: " << length;                                       // DEBUG
+    std::cerr << "\nYear: " << year << std::endl;
     // Call your password generation logic (adjust this as needed)
     std::string password = generatePassword(length, year, color.toStdString());
     // std::cerr << "Password is: " << password << std::endl;                   // DEBUG
