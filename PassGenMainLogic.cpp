@@ -31,17 +31,6 @@ bool isalphabetic(std::string c)
     return truth_flag;
 }
 
-void show_help()
-// shows information on how to use the program
-{
-    std::cout << "\nUsage: passgen [-SPECIFIER COMMAND]\n\n";
-    std::cout << "    Commands:\n";
-    std::cout << "\t-l <number>\t\t\tcommand specifies the length of the password\n"
-              << "\t-y <number>\t\t\tcommand specifies the optional integration of (birth) year into the password\n"
-              << "\t-fc <English word>\t\t\tcommand specifies the optional integration of your favorite color into the password"
-              << "\n\n\n";
-}
-
 void fill_arr_zero(bool arr[], int len)
 // given a built-in array, fill all the elements with 0/false
 {

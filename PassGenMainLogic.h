@@ -19,7 +19,6 @@ extern bool filled[MAX_PASS_LEN];
 /* Function declarations */
 bool isdigit(std::string c);
 bool isalphabetic(std::string c);
-void show_help();
 void fill_arr_zero(bool arr[], int len);
 void fill_bytwo(bool arr[], int pos);
 std::string generatePassword(int len, int year, std::string color);
