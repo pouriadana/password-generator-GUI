@@ -20,7 +20,7 @@
       <x>200</x>
       <y>180</y>
       <width>291</width>
-      <height>134</height>
+      <height>132</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -90,6 +90,19 @@
       </widget>
      </item>
     </layout>
+   </widget>
+   <widget class="QPushButton" name="copyButton">
+    <property name="geometry">
+     <rect>
+      <x>500</x>
+      <y>180</y>
+      <width>51</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Copy</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
