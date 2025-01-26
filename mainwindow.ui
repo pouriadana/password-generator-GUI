@@ -20,14 +20,19 @@
       <x>200</x>
       <y>180</y>
       <width>291</width>
-      <height>131</height>
+      <height>134</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QLabel" name="passwordLabel">
-       <property name="text">
-        <string>Your password will appear here</string>
+      <widget class="QLineEdit" name="passwordLabel">
+       <property name="font">
+        <font>
+         <family>Times New Roman</family>
+        </font>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
