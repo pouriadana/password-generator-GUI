@@ -1,3 +1,6 @@
+#include <QClipboard>
+#include <QGuiApplication>
+#include <QMessageBox>
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "PassGenMainLogic.h"
@@ -50,3 +53,17 @@ void MainWindow::on_generateButton_clicked() {
     // // Display the generated password
     ui->passwordLabel->setText(QString::fromStdString(password));
 }
+
+void MainWindow::on_copyButton_clicked()
+{
+    // get text from password field in GUI
+    QString password = ui->passwordLabel->text();
+
+    // Copy the text to the clipboard
+    QClipboard *clipboard = QGuiApplication::clipboard();
+    clipboard->setText(password);
+
+    // Optionally, show feedback to the user
+    QMessageBox::information(this, "Copied", "Password copied to clipboard!");
+}
+
