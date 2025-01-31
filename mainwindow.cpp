@@ -1,11 +1,14 @@
 #include <QClipboard>
 #include <QGuiApplication>
 #include <QMessageBox>
+#include <sqlite3.h>
+#include <iostream>
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "PassGenMainLogic.h"
 #define INVALID_INT_VAL -9999
 #define INVALID_STR_VAL "EmptyValueForColor"
+#define DB_NAME "passwords_database.db"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -52,6 +55,47 @@ void MainWindow::on_generateButton_clicked() {
     // std::cerr << "Password is: " << password << std::endl;                   // DEBUG
     // // Display the generated password
     ui->passwordLabel->setText(QString::fromStdString(password));
+
+    sqlite3 *db;
+    char *errMsg = nullptr;
+    int rc = sqlite3_open(DB_NAME, &db);
+    if (rc != SQLITE_OK) {
+        qDebug() << "Failed to read database" << sqlite3_errmsg(db);
+    }
+    else {
+        qDebug() << "Database read successfully\n";
+
+        // create sql table if database does not exist
+        // Create table if it doesn't exist
+        const char *sql = "CREATE TABLE IF NOT EXISTS passwords ("
+                          "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+                          "password TEXT NOT NULL, "
+                          "created_at DATETIME DEFAULT CURRENT_TIMESTAMP, "
+                          "comment TEXT"
+                          ");";
+
+        rc = sqlite3_exec(db, sql, nullptr, nullptr, &errMsg);
+        if (rc != SQLITE_OK) {
+            qDebug() << "Error creating table:" << errMsg;
+            sqlite3_free(errMsg);
+        } else {
+            qDebug() << "Table checked/created successfully";
+        }
+    }
+
+    // insert into database, the {password}, current data, and time
+    std::string sql_cmd = "INSERT INTO passwords (password, created_at) VALUES ('" + password + "', datetime('now'));";
+    const char *sql = sql_cmd.c_str();
+
+    rc = sqlite3_exec(db, sql, nullptr, nullptr, &errMsg);
+    if (rc != SQLITE_OK) {
+        qDebug() << "Error inserting data:" << errMsg;
+        sqlite3_free(errMsg);
+    } else {
+        qDebug() << "Password inserted successfully!";
+    }
+
+    sqlite3_close(db);
 }
 
 void MainWindow::on_copyButton_clicked()
