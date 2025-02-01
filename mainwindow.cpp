@@ -19,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
     // prepare sql table
     int connection_status = sqlite3_open(DB_NAME, &db);
     if (connection_status != SQLITE_OK) {
-        qDebug() << "Error connecting to database" << sqlite3_errmsg(db);
+        qDebug() << "Error connecting to database" << sqlite3_errmsg(db);       // DEBUG
     }
     else {
         // connection is stablished, create a table if there isn't one
@@ -32,12 +32,12 @@ MainWindow::MainWindow(QWidget *parent)
                                    ");";
         int rc = sqlite3_exec(db, create_table, nullptr, nullptr, &errMsg);
         if (rc != SQLITE_OK) {
-            qDebug() << "Error creating table:" << errMsg;
+            qDebug() << "Error creating table:" << errMsg;                      // DEBUG
             sqlite3_free(errMsg);
             sqlite3_close(db);
         }
         else {
-            qDebug() << "Table checked/created successfully";
+            qDebug() << "Table checked/created successfully";                   // DEBUG
         }
     }
     // prepare sql statement to prevent injection
@@ -56,7 +56,7 @@ MainWindow::~MainWindow()
 }
 
 void MainWindow::on_generateButton_clicked() {
-    // Add logic to handle the button click here
+    // Add logic to handle the button click
 
     // Retrieve input values
     QString length_string = ui->lengthInput->text();
@@ -81,7 +81,7 @@ void MainWindow::on_generateButton_clicked() {
     // std::cerr << "\nYear: " << year;                                         // DEBUG
     // std::cerr << "\nFavorite color: " << color.toStdString() << std::endl;   // DEBUG
 
-    // Call your password generation logic (adjust this as needed)
+    // Call password generation logic
     std::string password = generatePassword(length, year, color.toStdString());
 
     // std::cerr << "Password is: " << password << std::endl;                   // DEBUG
@@ -96,17 +96,17 @@ void MainWindow::on_generateButton_clicked() {
     if (bind_stat[0] == SQLITE_OK && bind_stat[1] == SQLITE_OK) {
         int rc = sqlite3_step(insertStmt);
         if (rc != SQLITE_DONE) {
-            qDebug() << "Insertion failed after successfull binding.";
+            qDebug() << "Insertion failed after successfull binding.";          // DEBUG
         }
     }
     else {
         qDebug() << "Binding falied";
         if (bind_stat[0] != SQLITE_OK) {
-            qDebug() << "Binding password failed\n";
+            qDebug() << "Binding password failed\n";                            // DEBUG
         }
         if (bind_stat[1] != SQLITE_OK) {
-            qDebug() << "Binding comment failed\n";
-            qDebug() << "Comment value: " << comment.toStdString().c_str();
+            qDebug() << "Binding comment failed\n";                             // DEBUG
+            qDebug() << "Comment value: " << comment.toStdString().c_str();     // DEBUG
         }
     }
     // Reset the statement for the next use
