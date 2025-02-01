@@ -57,11 +57,6 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_generateButton_clicked() {
     // Add logic to handle the button click here
-    // For example, display a message or process input fields
-    // QString generatedPassword = "GeneratedPassword123";
-
-    // // Update the QLabel text
-    // ui->passwordLabel->setText(generatedPassword);
 
     // Retrieve input values
     QString length_string = ui->lengthInput->text();
@@ -131,4 +126,3 @@ void MainWindow::on_copyButton_clicked()
     // Optionally, show feedback to the user
     QMessageBox::information(this, "Copied", "Password copied to clipboard!");
 }
-
