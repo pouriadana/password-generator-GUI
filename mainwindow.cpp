@@ -15,10 +15,35 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    // prepare sql table
+    int connection_status = sqlite3_open(DB_NAME, &db);
+    if (connection_status != SQLITE_OK) {
+        qDebug() << "Error connecting to database" << sqlite3_errmsg(db);
+    }
+    else {
+        // connection is stablished, create a table if there isn't one
+        const char *create_table =
+        "CREATE TABLE IF NOT EXISTS passwords ("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+        "password TEXT NOT NULL, "
+        "created at DATETIME DEFAULT CURRENT_TIMESTAMP, "
+        "comment TEXT"
+                                   ");";
+        int rc = sqlite3_exec(db, create_table, nullptr, nullptr, &errMsg);
+        if (rc != SQLITE_OK) {
+            qDebug() << "Error creating table:" << errMsg;
+            sqlite3_free(errMsg);
+        } else {
+            qDebug() << "Table checked/created successfully";
+        }
+    }
+    // prepare sql statements to prevent injection
 }
 
 MainWindow::~MainWindow()
 {
+    sqlite3_close(db);
     delete ui;
 }
 
@@ -56,38 +81,38 @@ void MainWindow::on_generateButton_clicked() {
     // // Display the generated password
     ui->passwordLabel->setText(QString::fromStdString(password));
 
-    sqlite3 *db;
-    char *errMsg = nullptr;
-    int rc = sqlite3_open(DB_NAME, &db);
-    if (rc != SQLITE_OK) {
-        qDebug() << "Failed to read database" << sqlite3_errmsg(db);
-    }
-    else {
-        qDebug() << "Database read successfully\n";
+    // sqlite3 *db;
+    // char *errMsg = nullptr;
+    // int rc = sqlite3_open(DB_NAME, &db);
+    // if (rc != SQLITE_OK) {
+    //     qDebug() << "Failed to read database" << sqlite3_errmsg(db);
+    // }
+    // else {
+    //     qDebug() << "Database read successfully\n";
 
-        // create sql table if database does not exist
-        // Create table if it doesn't exist
-        const char *sql = "CREATE TABLE IF NOT EXISTS passwords ("
-                          "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-                          "password TEXT NOT NULL, "
-                          "created_at DATETIME DEFAULT CURRENT_TIMESTAMP, "
-                          "comment TEXT"
-                          ");";
+    //     // create sql table if database does not exist
+    //     // Create table if it doesn't exist
+    //     const char *sql = "CREATE TABLE IF NOT EXISTS passwords ("
+    //                       "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+    //                       "password TEXT NOT NULL, "
+    //                       "created_at DATETIME DEFAULT CURRENT_TIMESTAMP, "
+    //                       "comment TEXT"
+    //                       ");";
 
-        rc = sqlite3_exec(db, sql, nullptr, nullptr, &errMsg);
-        if (rc != SQLITE_OK) {
-            qDebug() << "Error creating table:" << errMsg;
-            sqlite3_free(errMsg);
-        } else {
-            qDebug() << "Table checked/created successfully";
-        }
-    }
+    //     rc = sqlite3_exec(db, sql, nullptr, nullptr, &errMsg);
+    //     if (rc != SQLITE_OK) {
+    //         qDebug() << "Error creating table:" << errMsg;
+    //         sqlite3_free(errMsg);
+    //     } else {
+    //         qDebug() << "Table checked/created successfully";
+    //     }
+    // }
 
     // insert into database, the {password}, current data, and time
     std::string sql_cmd = "INSERT INTO passwords (password, created_at) VALUES ('" + password + "', datetime('now'));";
     const char *sql = sql_cmd.c_str();
 
-    rc = sqlite3_exec(db, sql, nullptr, nullptr, &errMsg);
+    int rc = sqlite3_exec(db, sql, nullptr, nullptr, &errMsg);
     if (rc != SQLITE_OK) {
         qDebug() << "Error inserting data:" << errMsg;
         sqlite3_free(errMsg);
@@ -95,7 +120,7 @@ void MainWindow::on_generateButton_clicked() {
         qDebug() << "Password inserted successfully!";
     }
 
-    sqlite3_close(db);
+    // sqlite3_close(db);
 }
 
 void MainWindow::on_copyButton_clicked()
