@@ -20,9 +20,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
-    sqlite3 *db = nullptr;
-    char *errMsg = nullptr;
-    sqlite3_stmt *insertSrmt = nullptr;
+    sqlite3 *db = nullptr;                          // the conection to database
+    char *errMsg = nullptr;                         // passed to sqlite3_exec()
+    sqlite3_stmt *insertSrmt = nullptr;             // compiled statement during preparation
 
 private slots:
     void on_generateButton_clicked();
