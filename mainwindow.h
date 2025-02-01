@@ -22,7 +22,7 @@ private:
     Ui::MainWindow *ui;
     sqlite3 *db = nullptr;                          // the conection to database
     char *errMsg = nullptr;                         // passed to sqlite3_exec()
-    sqlite3_stmt *insertSrmt = nullptr;             // compiled statement during preparation
+    sqlite3_stmt *insertStmt = nullptr;             // compiled statement during preparation
 
 private slots:
     void on_generateButton_clicked();
