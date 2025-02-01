@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>397</width>
-    <height>207</height>
+    <height>273</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <x>10</x>
       <y>20</y>
       <width>291</width>
-      <height>132</height>
+      <height>159</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -56,15 +56,18 @@
      <item>
       <widget class="QLineEdit" name="colorInput"/>
      </item>
+     <item>
+      <widget class="QLineEdit" name="commentInput"/>
+     </item>
     </layout>
    </widget>
    <widget class="QWidget" name="verticalLayoutWidget_2">
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>70</y>
-      <width>160</width>
-      <height>81</height>
+      <y>80</y>
+      <width>151</width>
+      <height>101</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -78,7 +81,7 @@
      <item>
       <widget class="QLabel" name="label_2">
        <property name="text">
-        <string>Year</string>
+        <string>Birth Year</string>
        </property>
       </widget>
      </item>
@@ -86,6 +89,13 @@
       <widget class="QLabel" name="label_3">
        <property name="text">
         <string>Favorite Color</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>Comment</string>
        </property>
       </widget>
      </item>
@@ -116,7 +126,7 @@
    </property>
    <widget class="QMenu" name="menuPassword_Generator">
     <property name="title">
-     <string></string>
+     <string/>
     </property>
    </widget>
    <addaction name="menuPassword_Generator"/>
