@@ -28,5 +28,6 @@ private slots:
     void on_generateButton_clicked();
 
     void on_copyButton_clicked();
+    void on_colorInput_cursorPositionChanged(int arg1, int arg2);
 };
 #endif // MAINWINDOW_H
