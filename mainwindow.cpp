@@ -62,8 +62,7 @@ void MainWindow::on_generateButton_clicked() {
     QString length_string = ui->lengthInput->text();
     QString year_string = ui->yearInput->text();
     QString color = ui->colorInput->text();
-    // handle comment here
-    std::string comment = "";                                  // TEMPORARY
+    QString comment = ui->commentInput->text();
 
     // handle empty arguments
     int length = INVALID_INT_VAL;
@@ -93,7 +92,7 @@ void MainWindow::on_generateButton_clicked() {
     // insert into database the {password}, and comment
     int bind_stat[2] = {0, 0};       // record the binding status of 1st and 3rd columns
     bind_stat[0] = sqlite3_bind_text(insertStmt, 1, password.c_str(), -1, SQLITE_TRANSIENT);
-    bind_stat[1] = sqlite3_bind_text(insertStmt, 2, comment.c_str(), -1, SQLITE_TRANSIENT);
+    bind_stat[1] = sqlite3_bind_text(insertStmt, 2, comment.toStdString().c_str(), -1, SQLITE_TRANSIENT);
     if (bind_stat[0] == SQLITE_OK && bind_stat[1] == SQLITE_OK) {
         int rc = sqlite3_step(insertStmt);
         if (rc != SQLITE_DONE) {
@@ -107,7 +106,7 @@ void MainWindow::on_generateButton_clicked() {
         }
         if (bind_stat[1] != SQLITE_OK) {
             qDebug() << "Binding comment failed\n";
-            qDebug() << "Comment value: " << comment.c_str();
+            qDebug() << "Comment value: " << comment.toStdString().c_str();
         }
     }
     // Reset the statement for the next use
