@@ -34,17 +34,23 @@ MainWindow::MainWindow(QWidget *parent)
         if (rc != SQLITE_OK) {
             qDebug() << "Error creating table:" << errMsg;
             sqlite3_free(errMsg);
-        } else {
+            sqlite3_close(db);
+        }
+        else {
             qDebug() << "Table checked/created successfully";
         }
     }
     // prepare sql statement to prevent injection
     const char *insertSQL = "INSERT INTO passwords (password, created_at, comment) VALUES (?, datetime('now'), ?);";
     int rc = sqlite3_prepare_v2(db, insertSQL, -1, &insertStmt, nullptr);
+    if (rc != SQLITE_OK) {
+        qDebug() << "Preparation initial phase failed\n";
+    }
 }
 
 MainWindow::~MainWindow()
 {
+    sqlite3_finalize(insertStmt);
     sqlite3_close(db);
     delete ui;
 }
@@ -61,6 +67,8 @@ void MainWindow::on_generateButton_clicked() {
     QString length_string = ui->lengthInput->text();
     QString year_string = ui->yearInput->text();
     QString color = ui->colorInput->text();
+    // handle comment here
+    std::string comment = "";                                  // TEMPORARY
 
     // handle empty arguments
     int length = INVALID_INT_VAL;
@@ -74,27 +82,41 @@ void MainWindow::on_generateButton_clicked() {
     if (color.isEmpty()) {                                      // if no color was set by the user, give a specific value to color
         color = INVALID_STR_VAL;
     }
-    std::cerr << "Length: " << length;                                       // DEBUG
-    std::cerr << "\nYear: " << year;
-    std::cerr << "\nFavorite color: " << color.toStdString() << std::endl;
+
+    // std::cerr << "Length: " << length;                                       // DEBUG
+    // std::cerr << "\nYear: " << year;                                         // DEBUG
+    // std::cerr << "\nFavorite color: " << color.toStdString() << std::endl;   // DEBUG
+
     // Call your password generation logic (adjust this as needed)
     std::string password = generatePassword(length, year, color.toStdString());
+
     // std::cerr << "Password is: " << password << std::endl;                   // DEBUG
-    // // Display the generated password
+
+    // // Display the generated password in the UI
     ui->passwordLabel->setText(QString::fromStdString(password));
 
-    // insert into database, the {password}, current data, and time
-    std::string sql_cmd = "INSERT INTO passwords (password, created_at) VALUES ('" + password + "', datetime('now'));";
-    const char *sql = sql_cmd.c_str();
-
-    int rc = sqlite3_exec(db, sql, nullptr, nullptr, &errMsg);
-    if (rc != SQLITE_OK) {
-        qDebug() << "Error inserting data:" << errMsg;
-        sqlite3_free(errMsg);
+    // insert into database the {password}, and comment
+    int bind_stat[2] = {0, 0};       // record the binding status of 1st and 3rd columns
+    bind_stat[0] = sqlite3_bind_text(insertStmt, 1, password.c_str(), -1, SQLITE_TRANSIENT);
+    bind_stat[1] = sqlite3_bind_text(insertStmt, 2, comment.c_str(), -1, SQLITE_TRANSIENT);
+    if (bind_stat[0] == SQLITE_OK && bind_stat[1] == SQLITE_OK) {
+        int rc = sqlite3_step(insertStmt);
+        if (rc != SQLITE_DONE) {
+            qDebug() << "Insertion failed after successfull binding.";
+        }
     }
     else {
-        qDebug() << "Password inserted successfully!";
+        qDebug() << "Binding falied";
+        if (bind_stat[0] != SQLITE_OK) {
+            qDebug() << "Binding password failed\n";
+        }
+        if (bind_stat[1] != SQLITE_OK) {
+            qDebug() << "Binding comment failed\n";
+            qDebug() << "Comment value: " << comment.c_str();
+        }
     }
+    // Reset the statement for the next use
+    sqlite3_reset(insertStmt);
 }
 
 void MainWindow::on_copyButton_clicked()
