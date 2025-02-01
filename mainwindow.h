@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <sqlite3.h>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -19,6 +20,9 @@ public:
 
 private:
     Ui::MainWindow *ui;
+    sqlite3 *db = nullptr;
+    char *errMsg = nullptr;
+    sqlite3_stmt *insertSrmt = nullptr;
 
 private slots:
     void on_generateButton_clicked();
