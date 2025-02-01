@@ -38,7 +38,9 @@ MainWindow::MainWindow(QWidget *parent)
             qDebug() << "Table checked/created successfully";
         }
     }
-    // prepare sql statements to prevent injection
+    // prepare sql statement to prevent injection
+    const char *insertSQL = "INSERT INTO passwords (password, created_at, comment) VALUES (?, datetime('now'), ?);";
+    int rc = sqlite3_prepare_v2(db, insertSQL, -1, &insertStmt, nullptr);
 }
 
 MainWindow::~MainWindow()
@@ -89,7 +91,8 @@ void MainWindow::on_generateButton_clicked() {
     if (rc != SQLITE_OK) {
         qDebug() << "Error inserting data:" << errMsg;
         sqlite3_free(errMsg);
-    } else {
+    }
+    else {
         qDebug() << "Password inserted successfully!";
     }
 }
