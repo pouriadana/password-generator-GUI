@@ -1,7 +1,7 @@
 # Password Generator Program with GUI
 
 
-## Programming languages & frameworks
+## Programming language & framework
 
 * C++
 * [Qt](https://www.qt.io)
