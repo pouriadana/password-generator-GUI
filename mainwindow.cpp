@@ -10,6 +10,11 @@
 #define INVALID_STR_VAL "EmptyValueForColor"
 #define DB_NAME "passwords_database.db"
 
+/* function declaration */
+std::string xorEncryptDecrypt(const std::string &data, char key);
+void saveToJson(const std::string &password, const std::string &comment);
+void loadFromJson();
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
