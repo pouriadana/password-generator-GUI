@@ -3,6 +3,13 @@
 #include <QMessageBox>
 #include <sqlite3.h>
 #include <iostream>
+#include <QJsonDocument>
+#include <QJsonArray>
+#include <QJsonObject>
+#include <QFile>
+#include <QCryptographicHash> // For optional hashing
+#include <QMessageBox>
+#include <QDebug>
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "PassGenMainLogic.h"
@@ -137,4 +144,35 @@ std::string xorEncryptDecrypt(const std::string &data, char key) {
         result[i] ^= key;
     }
     return result;
+}
+
+void saveToJson(const std::string &password, const std::string &comment) {
+    QString jsonFilePath = "passwords.json";
+    QFile file(jsonFilePath);
+
+    QJsonArray jsonArray;
+    if (file.open(QIODevice::ReadOnly)) {
+        // Read existing data and decrypt
+        QByteArray encryptedData = file.readAll();
+        QByteArray decryptedData = xorEncryptDecrypt(encryptedData.toStdString(), 'X').c_str();
+        QJsonDocument existingDoc = QJsonDocument::fromJson(decryptedData);
+        jsonArray = existingDoc.array();
+        file.close();
+    }
+
+    // Add new entry
+    QJsonObject newEntry;
+    newEntry["password"] = QString::fromStdString(password);
+    newEntry["created_at"] = QDateTime::currentDateTime().toString("yyyy-MM-dd HH:mm:ss");
+    newEntry["comment"] = QString::fromStdString(comment);
+    jsonArray.append(newEntry);
+
+    // Write updated JSON
+    if (file.open(QIODevice::WriteOnly)) {
+        QJsonDocument newDoc(jsonArray);
+        QByteArray encryptedData = xorEncryptDecrypt(newDoc.toJson().toStdString(), 'X').c_str();
+        file.write(encryptedData);
+        file.close();
+        qDebug() << "Password saved and encrypted successfully!";
+    }
 }
