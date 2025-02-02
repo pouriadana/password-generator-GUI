@@ -130,3 +130,11 @@ void MainWindow::on_copyButton_clicked()
     // Optionally, show feedback to the user
     QMessageBox::information(this, "Copied", "Password copied to clipboard!");
 }
+
+std::string xorEncryptDecrypt(const std::string &data, char key) {
+    std::string result = data;
+    for (size_t i = 0; i < data.size(); ++i) {
+        result[i] ^= key;
+    }
+    return result;
+}
