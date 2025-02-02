@@ -196,8 +196,8 @@ void loadFromJson() {
     }
 
     QJsonArray jsonArray = doc.array();
-    for (const QJsonValue &value : jsonArray) {
-        QJsonObject obj = value.toObject();
+    for (int i = 0; i < jsonArray.size(); ++i) {
+        QJsonObject obj = jsonArray[i].toObject();
         qDebug() << "Password:" << obj["password"].toString();
         qDebug() << "Created At:" << obj["created_at"].toString();
         qDebug() << "Comment:" << obj["comment"].toString();
