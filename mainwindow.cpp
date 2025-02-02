@@ -176,3 +176,31 @@ void saveToJson(const std::string &password, const std::string &comment) {
         qDebug() << "Password saved and encrypted successfully!";
     }
 }
+
+void loadFromJson() {
+    QString jsonFilePath = "passwords.json";
+    QFile file(jsonFilePath);
+
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Failed to open JSON file.";
+        return;
+    }
+
+    QByteArray encryptedData = file.readAll();
+    QByteArray decryptedData = xorEncryptDecrypt(encryptedData.toStdString(), 'X').c_str();
+    QJsonDocument doc = QJsonDocument::fromJson(decryptedData);
+
+    if (!doc.isArray()) {
+        qDebug() << "Invalid JSON format.";
+        return;
+    }
+
+    QJsonArray jsonArray = doc.array();
+    for (const QJsonValue &value : jsonArray) {
+        QJsonObject obj = value.toObject();
+        qDebug() << "Password:" << obj["password"].toString();
+        qDebug() << "Created At:" << obj["created_at"].toString();
+        qDebug() << "Comment:" << obj["comment"].toString();
+        qDebug() << "----";
+    }
+}
