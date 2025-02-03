@@ -24,5 +24,7 @@ private slots:
     void on_generateButton_clicked();
 
     void on_copyButton_clicked();
+
+    void on_viDataButton_clicked();
 };
 #endif // MAINWINDOW_H
