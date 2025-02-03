@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>397</width>
-    <height>273</height>
+    <width>633</width>
+    <height>238</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -66,7 +66,7 @@
      <rect>
       <x>310</x>
       <y>80</y>
-      <width>151</width>
+      <width>81</width>
       <height>101</height>
      </rect>
     </property>
@@ -114,13 +114,42 @@
      <string>Copy</string>
     </property>
    </widget>
+   <widget class="QFrame" name="dataFrame">
+    <property name="geometry">
+     <rect>
+      <x>390</x>
+      <y>20</y>
+      <width>241</width>
+      <height>161</height>
+     </rect>
+    </property>
+    <property name="frameShape">
+     <enum>QFrame::Shape::StyledPanel</enum>
+    </property>
+    <property name="frameShadow">
+     <enum>QFrame::Shadow::Raised</enum>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="viDataButton">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>50</y>
+      <width>75</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>View Data</string>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>397</width>
+     <width>633</width>
      <height>33</height>
     </rect>
    </property>
