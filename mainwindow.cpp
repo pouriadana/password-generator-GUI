@@ -56,15 +56,17 @@ void MainWindow::on_generateButton_clicked() {
         color = INVALID_STR_VAL;
     }
 
+#ifdef QT_DEBUG
     // std::cerr << "Length: " << length;                                       // DEBUG
     // std::cerr << "\nYear: " << year;                                         // DEBUG
     // std::cerr << "\nFavorite color: " << color.toStdString() << std::endl;   // DEBUG
-
+#endif
     // Call password generation logic
     std::string password = generatePassword(length, year, color.toStdString());
 
+#ifdef QT_DEBUG
     // std::cerr << "Password is: " << password << std::endl;                   // DEBUG
-
+#endif
     // // Display the generated password in the UI
     ui->passwordLabel->setText(QString::fromStdString(password));
     // Save to JSON
@@ -109,10 +111,13 @@ void saveToJson(const std::string &password, const std::string &comment) {
         QJsonDocument newDoc(jsonArray);
         file.write(newDoc.toJson());
         file.close();
+#ifdef QT_DEBUG
         qDebug() << "Password saved successfully!";
+#endif
     }
 }
 
+#ifdef QT_DEBUG
 void loadFromJsonForDebug() {
     QString jsonFilePath = "passwords.json";
     QFile file(jsonFilePath);
@@ -139,6 +144,7 @@ void loadFromJsonForDebug() {
         qDebug() << "----";
     }
 }
+#endif
 
 void MainWindow::on_viDataButton_clicked()
 {
@@ -161,7 +167,9 @@ void MainWindow::loadFromJsonForGUI() {
 
     QFile file("passwords.json");
     if (!file.open(QIODevice::ReadOnly)) {
+#ifdef QT_DEBUG
         qDebug() << "Failed to open JSON file.";
+#endif
         return;
     }
 
@@ -169,7 +177,9 @@ void MainWindow::loadFromJsonForGUI() {
     QJsonDocument doc = QJsonDocument::fromJson(jsonData);
 
     if (!doc.isArray()) {
+#ifdef QT_DEBUG
         qDebug() << "Invalid JSON format.";
+#endif
         return;
     }
 
@@ -192,7 +202,9 @@ void MainWindow::on_manualSaveButton_clicked()
     if (mpassword.isEmpty() || mcomment.isEmpty()) {
         // show a warning dialogue
         QMessageBox::warning(this, "Input Required", "Both password and comment fields must be filled out.");
+#ifdef QT_DEBUG
         qDebug() << "Cannot save; both fields must be set";
+#endif
     }
     else {
         saveToJson(mpassword.toStdString(), mcomment.toStdString());
