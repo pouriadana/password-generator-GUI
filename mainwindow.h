@@ -15,7 +15,7 @@ class MainWindow : public QMainWindow
 
 public:
     MainWindow(QWidget *parent = nullptr);
-    void loadDecryptedData();
+    void loadFromJsonForGUI();
     ~MainWindow();
 
 private:
