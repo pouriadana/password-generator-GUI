@@ -19,21 +19,21 @@
 /* function declaration */
 std::string xorEncryptDecrypt(const std::string &data, char key);
 void saveToJson(const std::string &password, const std::string &comment);
-void loadFromJson();
+void loadFromJsonForDebug();
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->dataFrame->setVisible(false);
+    ui->dataTable->setVisible(false);
 }
 
 MainWindow::~MainWindow()
 {
     // sqlite3_finalize(insertStmt);
     // sqlite3_close(db);
-    loadFromJson();
+    loadFromJsonForDebug();
     delete ui;
 }
 
@@ -88,11 +88,11 @@ void MainWindow::on_copyButton_clicked()
 }
 
 std::string xorEncryptDecrypt(const std::string &data, char key) {
-    std::string result = data;
-    for (size_t i = 0; i < data.size(); ++i) {
-        result[i] ^= key;
-    }
-    return result;
+    // std::string result = data;
+    // for (size_t i = 0; i < data.size(); ++i) {
+    //     result[i] ^= key;
+    // }
+    return data;
 }
 
 void saveToJson(const std::string &password, const std::string &comment) {
@@ -101,10 +101,9 @@ void saveToJson(const std::string &password, const std::string &comment) {
 
     QJsonArray jsonArray;
     if (file.open(QIODevice::ReadOnly)) {
-        // Read existing data and decrypt
-        QByteArray encryptedData = file.readAll();
-        QByteArray decryptedData = xorEncryptDecrypt(encryptedData.toStdString(), 'X').c_str();
-        QJsonDocument existingDoc = QJsonDocument::fromJson(decryptedData);
+        // Read existing data
+        QByteArray jsonData = file.readAll();
+        QJsonDocument existingDoc = QJsonDocument::fromJson(jsonData);
         jsonArray = existingDoc.array();
         file.close();
     }
@@ -119,14 +118,13 @@ void saveToJson(const std::string &password, const std::string &comment) {
     // Write updated JSON
     if (file.open(QIODevice::WriteOnly)) {
         QJsonDocument newDoc(jsonArray);
-        QByteArray encryptedData = xorEncryptDecrypt(newDoc.toJson().toStdString(), 'X').c_str();
-        file.write(encryptedData);
+        file.write(newDoc.toJson());
         file.close();
-        qDebug() << "Password saved and encrypted successfully!";
+        qDebug() << "Password saved successfully!";
     }
 }
 
-void loadFromJson() {
+void loadFromJsonForDebug() {
     QString jsonFilePath = "passwords.json";
     QFile file(jsonFilePath);
 
@@ -135,9 +133,8 @@ void loadFromJson() {
         return;
     }
 
-    QByteArray encryptedData = file.readAll();
-    QByteArray decryptedData = xorEncryptDecrypt(encryptedData.toStdString(), 'X').c_str();
-    QJsonDocument doc = QJsonDocument::fromJson(decryptedData);
+    QByteArray jsonData = file.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(jsonData);
 
     if (!doc.isArray()) {
         qDebug() << "Invalid JSON format.";
@@ -156,19 +153,19 @@ void loadFromJson() {
 
 void MainWindow::on_viDataButton_clicked()
 {
-    bool isVisible = ui->dataFrame->isVisible();
+    bool isVisible = ui->dataTable->isVisible();
 
     if (!isVisible) {
-        loadDecryptedData();  // Load data when showing the frame
+        loadFromJsonForGUI();  // Load data when showing the frame
         this->resize(this->width() + 400, this->height()); // Adjust width as needed
     } else {
         this->resize(this->width() - 400, this->height());
     }
 
-    ui->dataFrame->setVisible(!isVisible);
+    ui->dataTable->setVisible(!isVisible);
 }
 
-void MainWindow::loadDecryptedData() {
+void MainWindow::loadFromJsonForGUI() {
     ui->dataTable->clear();  // Clear existing data
     ui->dataTable->setColumnCount(3); // Set columns for password, created_at, comment
     ui->dataTable->setHorizontalHeaderLabels({"Password", "Created At", "Comment"});
@@ -179,9 +176,8 @@ void MainWindow::loadDecryptedData() {
         return;
     }
 
-    QByteArray encryptedData = file.readAll();
-    QByteArray decryptedData = xorEncryptDecrypt(encryptedData.toStdString(), 'X').c_str();
-    QJsonDocument doc = QJsonDocument::fromJson(decryptedData);
+    QByteArray jsonData = file.readAll();
+    QJsonDocument doc = QJsonDocument::fromJson(jsonData);
 
     if (!doc.isArray()) {
         qDebug() << "Invalid JSON format.";
