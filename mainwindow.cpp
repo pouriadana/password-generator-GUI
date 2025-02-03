@@ -157,6 +157,46 @@ void loadFromJson() {
 void MainWindow::on_viDataButton_clicked()
 {
     bool isVisible = ui->dataFrame->isVisible();
+
+    if (!isVisible) {
+        loadDecryptedData();  // Load data when showing the frame
+        this->resize(this->width() + 400, this->height()); // Adjust width as needed
+    } else {
+        this->resize(this->width() - 400, this->height());
+    }
+
     ui->dataFrame->setVisible(!isVisible);
 }
+
+void MainWindow::loadDecryptedData() {
+    ui->dataTable->clear();  // Clear existing data
+    ui->dataTable->setColumnCount(3); // Set columns for password, created_at, comment
+    ui->dataTable->setHorizontalHeaderLabels({"Password", "Created At", "Comment"});
+
+    QFile file("passwords.json");
+    if (!file.open(QIODevice::ReadOnly)) {
+        qDebug() << "Failed to open JSON file.";
+        return;
+    }
+
+    QByteArray encryptedData = file.readAll();
+    QByteArray decryptedData = xorEncryptDecrypt(encryptedData.toStdString(), 'X').c_str();
+    QJsonDocument doc = QJsonDocument::fromJson(decryptedData);
+
+    if (!doc.isArray()) {
+        qDebug() << "Invalid JSON format.";
+        return;
+    }
+
+    QJsonArray jsonArray = doc.array();
+    ui->dataTable->setRowCount(jsonArray.size());
+
+    for (int i = 0; i < jsonArray.size(); ++i) {
+        QJsonObject obj = jsonArray[i].toObject();
+        ui->dataTable->setItem(i, 0, new QTableWidgetItem(obj["password"].toString()));
+        ui->dataTable->setItem(i, 1, new QTableWidgetItem(obj["created_at"].toString()));
+        ui->dataTable->setItem(i, 2, new QTableWidgetItem(obj["comment"].toString()));
+    }
+}
+
 
