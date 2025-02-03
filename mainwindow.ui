@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>388</width>
-    <height>238</height>
+    <width>409</width>
+    <height>274</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -20,7 +20,7 @@
       <x>10</x>
       <y>20</y>
       <width>291</width>
-      <height>159</height>
+      <height>202</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
@@ -65,9 +65,9 @@
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>80</y>
-      <width>81</width>
-      <height>101</height>
+      <y>90</y>
+      <width>94</width>
+      <height>131</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -105,7 +105,7 @@
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>20</y>
+      <y>25</y>
       <width>51</width>
       <height>21</height>
      </rect>
@@ -114,43 +114,11 @@
      <string>Copy</string>
     </property>
    </widget>
-   <widget class="QFrame" name="dataFrame">
-    <property name="geometry">
-     <rect>
-      <x>390</x>
-      <y>20</y>
-      <width>291</width>
-      <height>161</height>
-     </rect>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::Shape::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Shadow::Raised</enum>
-    </property>
-    <widget class="QTableWidget" name="dataTable">
-     <property name="geometry">
-      <rect>
-       <x>-5</x>
-       <y>1</y>
-       <width>291</width>
-       <height>211</height>
-      </rect>
-     </property>
-     <property name="columnCount">
-      <number>3</number>
-     </property>
-     <column/>
-     <column/>
-     <column/>
-    </widget>
-   </widget>
    <widget class="QPushButton" name="viDataButton">
     <property name="geometry">
      <rect>
       <x>310</x>
-      <y>50</y>
+      <y>55</y>
       <width>75</width>
       <height>24</height>
      </rect>
@@ -159,14 +127,30 @@
      <string>View Data</string>
     </property>
    </widget>
+   <widget class="QTableWidget" name="dataTable">
+    <property name="geometry">
+     <rect>
+      <x>410</x>
+      <y>10</y>
+      <width>381</width>
+      <height>211</height>
+     </rect>
+    </property>
+    <property name="columnCount">
+     <number>3</number>
+    </property>
+    <column/>
+    <column/>
+    <column/>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>388</width>
-     <height>33</height>
+     <width>409</width>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuPassword_Generator">
