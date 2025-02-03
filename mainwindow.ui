@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>633</width>
+    <width>388</width>
     <height>238</height>
    </rect>
   </property>
@@ -119,7 +119,7 @@
      <rect>
       <x>390</x>
       <y>20</y>
-      <width>241</width>
+      <width>291</width>
       <height>161</height>
      </rect>
     </property>
@@ -129,6 +129,22 @@
     <property name="frameShadow">
      <enum>QFrame::Shadow::Raised</enum>
     </property>
+    <widget class="QTableWidget" name="dataTable">
+     <property name="geometry">
+      <rect>
+       <x>-5</x>
+       <y>1</y>
+       <width>291</width>
+       <height>211</height>
+      </rect>
+     </property>
+     <property name="columnCount">
+      <number>3</number>
+     </property>
+     <column/>
+     <column/>
+     <column/>
+    </widget>
    </widget>
    <widget class="QPushButton" name="viDataButton">
     <property name="geometry">
@@ -149,7 +165,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>633</width>
+     <width>388</width>
      <height>33</height>
     </rect>
    </property>
