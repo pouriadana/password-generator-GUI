@@ -199,6 +199,4 @@ void MainWindow::on_manualSaveButton_clicked()
     else {
         saveToJson(mpassword.toStdString(), mcomment.toStdString());
     }
-
 }
-
