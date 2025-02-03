@@ -26,6 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->dataFrame->setVisible(false);
 }
 
 MainWindow::~MainWindow()
@@ -69,7 +70,6 @@ void MainWindow::on_generateButton_clicked() {
 
     // // Display the generated password in the UI
     ui->passwordLabel->setText(QString::fromStdString(password));
-
     // Save to JSON
     saveToJson(password, comment.toStdString());
 }
@@ -153,3 +153,10 @@ void loadFromJson() {
         qDebug() << "----";
     }
 }
+
+void MainWindow::on_viDataButton_clicked()
+{
+    bool isVisible = ui->dataFrame->isVisible();
+    ui->dataFrame->setVisible(!isVisible);
+}
+
