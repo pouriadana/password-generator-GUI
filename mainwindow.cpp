@@ -29,41 +29,42 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
 
     // prepare sql table
-    int connection_status = sqlite3_open(DB_NAME, &db);
-    if (connection_status != SQLITE_OK) {
-        qDebug() << "Error connecting to database" << sqlite3_errmsg(db);       // DEBUG
-    }
-    else {
-        // connection is stablished, create a table if there isn't one
-        const char *create_table =
-        "CREATE TABLE IF NOT EXISTS passwords ("
-        "id INTEGER PRIMARY KEY AUTOINCREMENT, "
-        "password TEXT NOT NULL, "
-        "created at DATETIME DEFAULT CURRENT_TIMESTAMP, "
-        "comment TEXT"
-                                   ");";
-        int rc = sqlite3_exec(db, create_table, nullptr, nullptr, &errMsg);
-        if (rc != SQLITE_OK) {
-            qDebug() << "Error creating table:" << errMsg;                      // DEBUG
-            sqlite3_free(errMsg);
-            sqlite3_close(db);
-        }
-        else {
-            qDebug() << "Table checked/created successfully";                   // DEBUG
-        }
-    }
-    // prepare sql statement to prevent injection
-    const char *insertSQL = "INSERT INTO passwords (password, created_at, comment) VALUES (?, datetime('now'), ?);";
-    int rc = sqlite3_prepare_v2(db, insertSQL, -1, &insertStmt, nullptr);
-    if (rc != SQLITE_OK) {
-        qDebug() << "Preparation initial phase failed\n";
-    }
+    // int connection_status = sqlite3_open(DB_NAME, &db);
+    // if (connection_status != SQLITE_OK) {
+    //     qDebug() << "Error connecting to database" << sqlite3_errmsg(db);       // DEBUG
+    // }
+    // else {
+    //     // connection is stablished, create a table if there isn't one
+    //     const char *create_table =
+    //     "CREATE TABLE IF NOT EXISTS passwords ("
+    //     "id INTEGER PRIMARY KEY AUTOINCREMENT, "
+    //     "password TEXT NOT NULL, "
+    //     "created at DATETIME DEFAULT CURRENT_TIMESTAMP, "
+    //     "comment TEXT"
+    //                                ");";
+    //     int rc = sqlite3_exec(db, create_table, nullptr, nullptr, &errMsg);
+    //     if (rc != SQLITE_OK) {
+    //         qDebug() << "Error creating table:" << errMsg;                      // DEBUG
+    //         sqlite3_free(errMsg);
+    //         sqlite3_close(db);
+    //     }
+    //     else {
+    //         qDebug() << "Table checked/created successfully";                   // DEBUG
+    //     }
+    // }
+    // // prepare sql statement to prevent injection
+    // const char *insertSQL = "INSERT INTO passwords (password, created_at, comment) VALUES (?, datetime('now'), ?);";
+    // int rc = sqlite3_prepare_v2(db, insertSQL, -1, &insertStmt, nullptr);
+    // if (rc != SQLITE_OK) {
+    //     qDebug() << "Preparation initial phase failed\n";
+    // }
 }
 
 MainWindow::~MainWindow()
 {
-    sqlite3_finalize(insertStmt);
-    sqlite3_close(db);
+    // sqlite3_finalize(insertStmt);
+    // sqlite3_close(db);
+    loadFromJson();
     delete ui;
 }
 
@@ -102,27 +103,30 @@ void MainWindow::on_generateButton_clicked() {
     ui->passwordLabel->setText(QString::fromStdString(password));
 
     // insert into database the {password}, and comment
-    int bind_stat[2] = {0, 0};       // record the binding status of 1st and 3rd columns
-    bind_stat[0] = sqlite3_bind_text(insertStmt, 1, password.c_str(), -1, SQLITE_TRANSIENT);
-    bind_stat[1] = sqlite3_bind_text(insertStmt, 2, comment.toStdString().c_str(), -1, SQLITE_TRANSIENT);
-    if (bind_stat[0] == SQLITE_OK && bind_stat[1] == SQLITE_OK) {
-        int rc = sqlite3_step(insertStmt);
-        if (rc != SQLITE_DONE) {
-            qDebug() << "Insertion failed after successfull binding.";          // DEBUG
-        }
-    }
-    else {
-        qDebug() << "Binding falied";
-        if (bind_stat[0] != SQLITE_OK) {
-            qDebug() << "Binding password failed\n";                            // DEBUG
-        }
-        if (bind_stat[1] != SQLITE_OK) {
-            qDebug() << "Binding comment failed\n";                             // DEBUG
-            qDebug() << "Comment value: " << comment.toStdString().c_str();     // DEBUG
-        }
-    }
-    // Reset the statement for the next use
-    sqlite3_reset(insertStmt);
+    // int bind_stat[2] = {0, 0};       // record the binding status of 1st and 3rd columns
+    // bind_stat[0] = sqlite3_bind_text(insertStmt, 1, password.c_str(), -1, SQLITE_TRANSIENT);
+    // bind_stat[1] = sqlite3_bind_text(insertStmt, 2, comment.toStdString().c_str(), -1, SQLITE_TRANSIENT);
+    // if (bind_stat[0] == SQLITE_OK && bind_stat[1] == SQLITE_OK) {
+    //     int rc = sqlite3_step(insertStmt);
+    //     if (rc != SQLITE_DONE) {
+    //         qDebug() << "Insertion failed after successfull binding.";          // DEBUG
+    //     }
+    // }
+    // else {
+    //     qDebug() << "Binding falied";
+    //     if (bind_stat[0] != SQLITE_OK) {
+    //         qDebug() << "Binding password failed\n";                            // DEBUG
+    //     }
+    //     if (bind_stat[1] != SQLITE_OK) {
+    //         qDebug() << "Binding comment failed\n";                             // DEBUG
+    //         qDebug() << "Comment value: " << comment.toStdString().c_str();     // DEBUG
+    //     }
+    // }
+    // // Reset the statement for the next use
+    // sqlite3_reset(insertStmt);
+
+    // Save to JSON
+    saveToJson(password, comment.toStdString());
 }
 
 void MainWindow::on_copyButton_clicked()
