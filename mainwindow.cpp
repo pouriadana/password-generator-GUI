@@ -17,7 +17,6 @@
 #define DB_NAME "passwords_database.db"
 
 /* function declaration */
-std::string xorEncryptDecrypt(const std::string &data, char key);
 void saveToJson(const std::string &password, const std::string &comment);
 void loadFromJsonForDebug();
 
@@ -85,14 +84,6 @@ void MainWindow::on_copyButton_clicked()
 
     // Optionally, show feedback to the user
     QMessageBox::information(this, "Copied", "Password copied to clipboard!");
-}
-
-std::string xorEncryptDecrypt(const std::string &data, char key) {
-    // std::string result = data;
-    // for (size_t i = 0; i < data.size(); ++i) {
-    //     result[i] ^= key;
-    // }
-    return data;
 }
 
 void saveToJson(const std::string &password, const std::string &comment) {
