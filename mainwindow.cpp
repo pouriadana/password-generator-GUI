@@ -186,8 +186,6 @@ void MainWindow::loadFromJsonForGUI() {
     }
 }
 
-
-
 void MainWindow::on_manualSaveButton_clicked()
 {
     // retrieve manual password & comment
@@ -195,6 +193,7 @@ void MainWindow::on_manualSaveButton_clicked()
     QString mcomment = ui->manualCommentInput->text();
     if (mpassword.isEmpty() || mcomment.isEmpty()) {
         // show a warning dialogue
+        QMessageBox::warning(this, "Input Required", "Both password and comment fields must be filled out.");
         qDebug() << "Cannot save; both fields must be set";
     }
     else {
