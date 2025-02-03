@@ -117,8 +117,8 @@ std::string generatePassword(int length, int year, std::string fcolor)
         }
         for (int i = 0; i < fcolor.size(); ++i) {
             if (filled[rotating_sub] == false) {
-                std::cerr << "color at sub " << i << " is " << fcolor[i]
-                          << ", rotating index is " << rotating_sub << '\n';
+                // std::cerr << "color at sub " << i << " is " << fcolor[i]                // DEBUG
+                //           << ", rotating index is " << rotating_sub << '\n';            // DEBUG
                 std::string temp_char{ fcolor[i]};
                 password.replace(rotating_sub, 1, temp_char);
                 filled[rotating_sub] = true;
