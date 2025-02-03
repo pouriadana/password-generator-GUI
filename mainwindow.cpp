@@ -187,3 +187,19 @@ void MainWindow::loadFromJsonForGUI() {
 }
 
 
+
+void MainWindow::on_manualSaveButton_clicked()
+{
+    // retrieve manual password & comment
+    QString mpassword = ui->manualPasswordInput->text();
+    QString mcomment = ui->manualCommentInput->text();
+    if (mpassword.isEmpty() || mcomment.isEmpty()) {
+        // show a warning dialogue
+        qDebug() << "Cannot save; both fields must be set";
+    }
+    else {
+        saveToJson(mpassword.toStdString(), mcomment.toStdString());
+    }
+
+}
+

@@ -27,5 +27,6 @@ private slots:
     void on_copyButton_clicked();
 
     void on_viDataButton_clicked();
+    void on_manualSaveButton_clicked();
 };
 #endif // MAINWINDOW_H
