@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>409</width>
-    <height>274</height>
+    <width>431</width>
+    <height>392</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -66,7 +66,7 @@
      <rect>
       <x>310</x>
       <y>90</y>
-      <width>94</width>
+      <width>120</width>
       <height>131</height>
      </rect>
     </property>
@@ -130,8 +130,8 @@
    <widget class="QTableWidget" name="dataTable">
     <property name="geometry">
      <rect>
-      <x>410</x>
-      <y>10</y>
+      <x>440</x>
+      <y>20</y>
       <width>381</width>
       <height>211</height>
      </rect>
@@ -143,13 +143,64 @@
     <column/>
     <column/>
    </widget>
+   <widget class="QLabel" name="label_5">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>280</y>
+      <width>118</width>
+      <height>28</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Manula Comment</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_6">
+    <property name="geometry">
+     <rect>
+      <x>310</x>
+      <y>310</y>
+      <width>118</width>
+      <height>34</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Manual Password</string>
+    </property>
+   </widget>
+   <widget class="QWidget" name="verticalLayoutWidget_3">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>240</y>
+      <width>291</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QPushButton" name="manualSaveButton">
+       <property name="text">
+        <string>Save Manual</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="manualCommentInput"/>
+     </item>
+     <item>
+      <widget class="QLineEdit" name="manualPasswordInput"/>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>409</width>
+     <width>431</width>
      <height>25</height>
     </rect>
    </property>
