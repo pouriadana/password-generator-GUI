@@ -8,8 +8,12 @@
 * [Qt Creator](https://www.qt.io)
 
 ## Screenshots
-![Picture 1](/screenshots/Screenshot_6.png)
+![Picture 1](/screenshots/Screenshot_10.png)
 
 ---
 
-![Picture 2](/screenshots/Screenshot_7.png)
+![Picture 2](/screenshots/Screenshot_11.png)
+
+---
+
+![Picture 2](/screenshots/Screenshot_12.png)
