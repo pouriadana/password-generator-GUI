@@ -30,8 +30,6 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
-    // sqlite3_finalize(insertStmt);
-    // sqlite3_close(db);
     loadFromJsonForDebug();
     delete ui;
 }
