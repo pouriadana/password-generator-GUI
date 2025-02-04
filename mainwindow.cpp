@@ -24,7 +24,9 @@ bool is_first_execution = true;
 
 /* function declaration */
 void saveToJson(const std::string &password, const std::string &comment);
+#ifdef QT_DEBUG
 void loadFromJsonForDebug();
+#endif
 QString hashPassword(const QString &password);                              // Function to hash a password
 QString loadStoredMasterPasswordHash();                                     // Function to load the stored master password hash
 void storeMasterPassword(const QString &password);                          // Function to store the master password securely
@@ -40,7 +42,9 @@ MainWindow::MainWindow(QWidget *parent)
 
 MainWindow::~MainWindow()
 {
+#ifdef QT_DEBUG
     loadFromJsonForDebug();
+#endif
     delete ui;
 }
 
