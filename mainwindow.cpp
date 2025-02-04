@@ -1,20 +1,21 @@
-#include <QClipboard>
-#include <QGuiApplication>
-#include <QMessageBox>
 #include <iostream>
+#include <QClipboard>
+#include <QCryptographicHash>
+#include <QDebug>
+#include <QFile>
+#include <QGuiApplication>
+#include <QInputDialog>
 #include <QJsonDocument>
 #include <QJsonArray>
 #include <QJsonObject>
-#include <QFile>
-#include <QCryptographicHash> // For optional hashing
 #include <QMessageBox>
-#include <QDebug>
+
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 #include "PassGenMainLogic.h"
+
 #define INVALID_INT_VAL -9999
 #define INVALID_STR_VAL "EmptyValueForColor"
-#define DB_NAME "passwords_database.db"
 
 /* function declaration */
 void saveToJson(const std::string &password, const std::string &comment);
