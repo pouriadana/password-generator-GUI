@@ -1,7 +1,9 @@
 #include <iostream>
 #include <QClipboard>
 #include <QCryptographicHash>
+#ifdef QT_DEBUG
 #include <QDebug>
+#endif
 #include <QFile>
 #include <QGuiApplication>
 #include <QInputDialog>
