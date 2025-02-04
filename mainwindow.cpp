@@ -16,9 +16,6 @@
 #define INVALID_STR_VAL "EmptyValueForColor"
 #define DB_NAME "passwords_database.db"
 
-/* Global variables */
-bool first_execution = true;
-
 /* function declaration */
 void saveToJson(const std::string &password, const std::string &comment);
 void loadFromJsonForDebug();
@@ -152,20 +149,6 @@ void loadFromJsonForDebug() {
 void MainWindow::on_viDataButton_clicked()
 {
     bool isVisible = ui->dataTable->isVisible();
-
-    /* Logic for asking for password
-     * if a global variable named "first_execution" is set to positive
-     * then ask for password. check that password with the master pass
-     * -word.
-    */
-    if (first_execution && !isVisible) {
-        // check for password validity here
-        // ...
-        // if entered password and master passwords match,
-        // first_execution = false;
-        // OK to proceed.
-        // otherwise, prevent further execution of the function
-    }
 
     if (!isVisible) {
         loadFromJsonForGUI();  // Load data when showing the frame
