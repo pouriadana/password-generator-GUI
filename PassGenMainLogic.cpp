@@ -106,7 +106,7 @@ std::string generatePassword(int length, int year, std::string fcolor)
         fill_bytwo(filled, sub2);                                                       // record birth year (pair 2) position in the password
         // std::cout << '\n' << password << '\n';                                       // DEBUG
     }
-    std::cerr << password << std::endl;
+    // std::cerr << password << std::endl;                                              // DEBUG
 
     /* Integrate favorite color into the password */
     if (year_flag == false && fcolor_flag == true) {                                    // this means if filled array is empty
