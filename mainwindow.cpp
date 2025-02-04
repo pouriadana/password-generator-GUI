@@ -18,6 +18,10 @@
 #define INVALID_STR_VAL "EmptyValueForColor"
 #define MASTER_PASS_FILE "masterpass.hash"
 
+/* Global variables */
+bool is_first_execution = true;
+bool allow_viewing = false;
+
 /* function declaration */
 void saveToJson(const std::string &password, const std::string &comment);
 void loadFromJsonForDebug();
@@ -156,14 +160,28 @@ void MainWindow::on_viDataButton_clicked()
 {
     bool isVisible = ui->dataTable->isVisible();
 
-    if (!isVisible) {
-        loadFromJsonForGUI();  // Load data when showing the frame
-        this->resize(this->width() + 400, this->height()); // Adjust width as needed
-    } else {
-        this->resize(this->width() - 400, this->height());
+    if (!isVisible && is_first_execution) {
+        QString stored_hash = loadStoredMasterPasswordHash();
+        QString user_password_input;
+        user_password_input = QInputDialog::getText(this, "Enter master password",
+                                                    "Enter your master password to view the saved data",
+                                                    QLineEdit::Password);
+        // check password validity
+        if (hashPassword(user_password_input) == stored_hash) {
+            is_first_execution = false;
+            allow_viewing = true;
+        }
     }
-
-    ui->dataTable->setVisible(!isVisible);
+    if (allow_viewing) {
+        if (!isVisible) {
+            loadFromJsonForGUI();  // Load data when showing the frame
+            this->resize(this->width() + 400, this->height()); // Adjust width as needed
+        } else {
+            this->resize(this->width() - 400, this->height());
+        }
+    }
+    if (!(isVisible == false && allow_viewing == false))
+        ui->dataTable->setVisible(!isVisible);
 }
 
 void MainWindow::loadFromJsonForGUI() {
