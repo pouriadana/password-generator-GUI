@@ -16,10 +16,15 @@
 
 #define INVALID_INT_VAL -9999
 #define INVALID_STR_VAL "EmptyValueForColor"
+#define MASTER_PASS_FILE "masterpass.hash"
 
 /* function declaration */
 void saveToJson(const std::string &password, const std::string &comment);
 void loadFromJsonForDebug();
+QString hashPassword(const QString &password);                              // Function to hash a password
+QString loadStoredMasterPasswordHash();                                     // Function to load the stored master password hash
+void storeMasterPassword(const QString &password);                          // Function to store the master password securely
+
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -212,8 +217,70 @@ void MainWindow::on_manualSaveButton_clicked()
     }
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_masterPassButton_clicked()
 {
+    QString storedHash = loadStoredMasterPasswordHash();
+    QString currentPass, newPass;
 
+    // If no master password has been set, prompt the user to create one
+    if (storedHash.isEmpty()) {
+        newPass = QInputDialog::getText(this, "Set Master Password",
+                                        "No master password found.\nSet a new master password:",
+                                        QLineEdit::Password);
+        if (newPass.isEmpty()) {
+            QMessageBox::warning(this, "Warning", "Master password cannot be empty.");
+            return;
+        }
+        storeMasterPassword(newPass);
+        QMessageBox::information(this, "Success", "Master password set successfully!");
+    }
+    else { // If a master password exists, require authentication before setting a new one
+        currentPass = QInputDialog::getText(this, "Current Master Password Required",
+                                            "Enter your current master password:",
+                                            QLineEdit::Password);
+
+        // Verify current password
+        if (hashPassword(currentPass) != storedHash) {
+            QMessageBox::critical(this, "Error", "Incorrect master password!");
+            return;
+        }
+
+        // If verification succeeds, ask for the new master password
+        newPass = QInputDialog::getText(this, "Set New Master Password",
+                                        "Enter your new master password:",
+                                        QLineEdit::Password);
+        if (newPass.isEmpty()) {
+            QMessageBox::warning(this, "Warning", "New master password cannot be empty.");
+            return;
+        }
+
+        storeMasterPassword(newPass);
+        QMessageBox::information(this, "Success", "Master password updated successfully!");
+    }
 }
 
+QString hashPassword(const QString &password) {
+    return QString(QCryptographicHash::hash(password.toUtf8(), QCryptographicHash::Sha256).toHex());
+}
+
+// Function to load the stored master password hash
+QString loadStoredMasterPasswordHash() {
+    QFile file(MASTER_PASS_FILE);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return ""; // No master password set
+    }
+    QString hash = file.readAll();
+    file.close();
+    return hash;
+}
+
+// Function to store the master password securely
+void storeMasterPassword(const QString &password) {
+    QFile file(MASTER_PASS_FILE);
+    if (!file.open(QIODevice::WriteOnly)) {
+        QMessageBox::critical(nullptr, "Error", "Failed to save master password!");
+        return;
+    }
+    file.write(hashPassword(password).toUtf8());
+    file.close();
+}
