@@ -19,8 +19,8 @@
 #define MASTER_PASS_FILE "masterpass.hash"
 
 /* Global variables */
-bool is_first_execution = true;
 bool allow_viewing = false;
+bool is_first_execution = true;
 
 /* function declaration */
 void saveToJson(const std::string &password, const std::string &comment);
@@ -176,11 +176,12 @@ void MainWindow::on_viDataButton_clicked()
         if (!isVisible) {
             loadFromJsonForGUI();  // Load data when showing the frame
             this->resize(this->width() + 400, this->height()); // Adjust width as needed
-        } else {
+        }
+        else {
             this->resize(this->width() - 400, this->height());
         }
     }
-    if (!(isVisible == false && allow_viewing == false))
+    if (!(isVisible == false && allow_viewing == false)) // if the user fails to enter a correct password to view the data
         ui->dataTable->setVisible(!isVisible);
 }
 
