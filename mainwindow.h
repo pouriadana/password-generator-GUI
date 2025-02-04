@@ -28,5 +28,6 @@ private slots:
 
     void on_viDataButton_clicked();
     void on_manualSaveButton_clicked();
+    void on_masterPassButton_clicked();
 };
 #endif // MAINWINDOW_H

@@ -227,3 +227,9 @@ void MainWindow::on_manualSaveButton_clicked()
         saveToJson(mpassword.toStdString(), mcomment.toStdString());
     }
 }
+
+void MainWindow::on_pushButton_clicked()
+{
+
+}
+
