@@ -9,6 +9,19 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+set(OPENSSL_ROOT_DIR "C:/msys64/mingw64")
+set(OPENSSL_INCLUDE_DIR "C:/msys64/mingw64/include")
+set(OPENSSL_CRYPTO_LIBRARY "C:/msys64/mingw64/lib/libcrypto.a")
+set(OPENSSL_SSL_LIBRARY "C:/msys64/mingw64/lib/libssl.a")
+
+find_package(OpenSSL REQUIRED)
+
+if(OPENSSL_FOUND)
+    message(STATUS "Found OpenSSL: ${OPENSSL_ROOT_DIR}")
+else()
+    message(FATAL_ERROR "OpenSSL not found!")
+endif()
+
 find_package(QT NAMES Qt6 Qt5 REQUIRED COMPONENTS Widgets)
 find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Widgets)
 
@@ -45,7 +58,7 @@ else()
     endif()
 endif()
 
-target_link_libraries(PasswordGen PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+target_link_libraries(PasswordGen PRIVATE Qt${QT_VERSION_MAJOR}::Widgets OpenSSL::Crypto OpenSSL::SSL)
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
 # If you are developing for iOS or macOS you should consider setting an
