@@ -107,10 +107,9 @@ void saveToJson(const std::string &password, const std::string &comment) {
     QFile file(jsonFilePath);
 
     /* TODO
-    * if password_hash file exists, we will decrypt the JSON
-    * if it doesn't, we will just read it as is.
-    * if password_hash exists, but JSON is not encrypted, read JSON as is.
-    */
+     * if password_hash file exists, we will decrypt the JSON
+     * if it doesn't, we will just read it as is.
+     * if password_hash exists, JSON is guaranteed to be encrypted */
 
     QJsonArray jsonArray;
     if (file.open(QIODevice::ReadOnly)) {
