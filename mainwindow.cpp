@@ -1,4 +1,5 @@
 #include <iostream>
+#include <QByteArray>
 #include <QClipboard>
 #include <QCryptographicHash>
 #ifdef QT_DEBUG
@@ -29,9 +30,11 @@ void saveToJson(const std::string &password, const std::string &comment);
 #ifdef QT_DEBUG
 void loadFromJsonForDebug();
 #endif
-QString hashPassword(const QString &password);                              // Function to hash a password
-QString loadStoredMasterPasswordHash();                                     // Function to load the stored master password hash
-void storeMasterPassword(const QString &password);                          // Function to store the master password securely
+QString hashPassword(const QString &password);                                          // Function to hash a password
+QString loadStoredMasterPasswordHash();                                                 // Function to load the stored master password hash
+void storeMasterPassword(const QString &password);                                      // Function to store the master password securely
+QByteArray encryptData(const QByteArray &data, const QString &passwordHash);            // use XOR and master password's hash to encrypt JSON
+QByteArray decryptData(const QByteArray &encryptedData, const QString &passwordHash);   // use XOR and master password's hash to decrypt
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -110,6 +113,13 @@ void saveToJson(const std::string &password, const std::string &comment) {
      * if password_hash file exists, we will decrypt the JSON
      * if it doesn't, we will just read it as is.
      * if password_hash exists, JSON is guaranteed to be encrypted */
+    std::filesystem::path jsonFile(MASTER_PASS_FILE);
+    if (std::filesystem::exists(jsonFile)) {
+        // decrypt json
+    }
+    else {
+        // read as is
+    }
 
     QJsonArray jsonArray;
     if (file.open(QIODevice::ReadOnly)) {
@@ -217,10 +227,6 @@ void MainWindow::loadFromJsonForGUI() {
     ui->dataTable->setColumnCount(3); // Set columns for password, created_at, comment
     ui->dataTable->setHorizontalHeaderLabels({"Password", "Created At", "Comment"});
 
-    /* TODO
-     * if password_hash file exists, we will decrypt the JSON
-     * if it doesn't, we will just read it as is.
-     * if password_hash exists, JSON is guaranteed to be encrypted */
     QFile file("passwords.json");
     if (!file.open(QIODevice::ReadOnly)) {
 #ifdef QT_DEBUG
@@ -230,6 +236,28 @@ void MainWindow::loadFromJsonForGUI() {
     }
 
     QByteArray jsonData = file.readAll();
+    file.close();
+
+    /* TODO
+     * if password_hash file exists, we will decrypt the JSON
+     * if it doesn't, we will just read it as is.
+     * if password_hash exists, JSON is guaranteed to be encrypted */
+    std::filesystem::path filePath(MASTER_PASS_FILE);
+    if (std::filesystem::exists(filePath)) {
+        // decrypt the JSON
+        // Load stored master password hash
+        QString storedHash = loadStoredMasterPasswordHash();
+        jsonData = decryptData(jsonData, storedHash);
+    }
+//     QFile file("passwords.json");
+//     if (!file.open(QIODevice::ReadOnly)) {
+// #ifdef QT_DEBUG
+//         qDebug() << "Failed to open JSON file.";
+// #endif
+//         return;
+//     }
+
+//     QByteArray jsonData = file.readAll();
     QJsonDocument doc = QJsonDocument::fromJson(jsonData);
 
     if (!doc.isArray()) {
@@ -286,6 +314,27 @@ void MainWindow::on_masterPassButton_clicked()
         /* TODO
          * JSON is unencrypted at this point, encrypt the unsecured JSON file
          * Do the encryption here */
+        QFile jsonFile("passwords.json");
+        if (jsonFile.exists()) {
+            if (jsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                QByteArray jsonData = jsonFile.readAll();
+                jsonFile.close();
+
+                // Encrypt JSON data using the hash of the new master password
+                QString masterHash = hashPassword(newPass);  // Assuming generateHash() returns a hex-encoded hash
+                QByteArray encryptedData = encryptData(jsonData, masterHash);  // Encrypt using hash as key
+
+                // Overwrite the original JSON file with encrypted data
+                if (jsonFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+                    jsonFile.write(encryptedData);
+                    jsonFile.close();
+                } else {
+                    QMessageBox::critical(this, "Error", "Failed to write encrypted JSON file.");
+                }
+            } else {
+                QMessageBox::critical(this, "Error", "Failed to read JSON file.");
+            }
+        }
     }
     else { // If a master password exists, require authentication before setting a new one
         currentPass = QInputDialog::getText(this, "Current Master Password Required",
@@ -340,4 +389,27 @@ void storeMasterPassword(const QString &password) {
     }
     file.write(hashPassword(password).toUtf8());
     file.close();
+}
+
+QByteArray encryptData(const QByteArray &data, const QString &passwordHash) {
+    QByteArray key = QCryptographicHash::hash(passwordHash.toUtf8(), QCryptographicHash::Sha256);
+    QByteArray encryptedData = data;
+
+    for (int i = 0; i < data.size(); i++) {
+        encryptedData[i] = data[i] ^ key[i % key.size()];
+    }
+
+    return encryptedData.toBase64();  // Encode for safe storage
+}
+
+QByteArray decryptData(const QByteArray &encryptedData, const QString &passwordHash) {
+    QByteArray key = QCryptographicHash::hash(passwordHash.toUtf8(), QCryptographicHash::Sha256);
+    QByteArray decodedData = QByteArray::fromBase64(encryptedData);
+
+    QByteArray decryptedData = decodedData;
+    for (int i = 0; i < decodedData.size(); i++) {
+        decryptedData[i] = decodedData[i] ^ key[i % key.size()];
+    }
+
+    return decryptedData;
 }
