@@ -106,6 +106,12 @@ void saveToJson(const std::string &password, const std::string &comment) {
     QString jsonFilePath = "passwords.json";
     QFile file(jsonFilePath);
 
+    /* TODO
+    * if password_hash file exists, we will decrypt the JSON
+    * if it doesn't, we will just read it as is.
+    * if password_hash exists, but JSON is not encrypted, read JSON as is.
+    */
+
     QJsonArray jsonArray;
     if (file.open(QIODevice::ReadOnly)) {
         // Read existing data
@@ -122,6 +128,8 @@ void saveToJson(const std::string &password, const std::string &comment) {
     newEntry["comment"] = QString::fromStdString(comment);
     jsonArray.append(newEntry);
 
+    /* TODO
+     * Encrypt JSON using masterpass hash */
     // Write updated JSON
     if (file.open(QIODevice::WriteOnly)) {
         QJsonDocument newDoc(jsonArray);
@@ -137,6 +145,11 @@ void saveToJson(const std::string &password, const std::string &comment) {
 void loadFromJsonForDebug() {
     QString jsonFilePath = "passwords.json";
     QFile file(jsonFilePath);
+
+    /* TODO
+     * if password_hash file exists, we will decrypt the JSON
+     * if it doesn't, we will just read it as is.
+     * if password_hash exists, but JSON is not encrypted, read JSON as is. */
 
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug() << "Failed to open JSON file.";
@@ -183,7 +196,7 @@ void MainWindow::on_viDataButton_clicked()
                 QMessageBox::warning(this, "Wrong Password", "Master password is wrong");
             }
             else {
-                QMessageBox::warning(this, "No master password set", "Master password is not set");
+                QMessageBox::warning(this, "No master pas sword set", "Master password is not set");
             }
         }
     }
@@ -205,6 +218,10 @@ void MainWindow::loadFromJsonForGUI() {
     ui->dataTable->setColumnCount(3); // Set columns for password, created_at, comment
     ui->dataTable->setHorizontalHeaderLabels({"Password", "Created At", "Comment"});
 
+    /* TODO
+     * if password_hash file exists, we will decrypt the JSON
+     * if it doesn't, we will just read it as is.
+     * if password_hash exists, JSON is guaranteed to be encrypted */
     QFile file("passwords.json");
     if (!file.open(QIODevice::ReadOnly)) {
 #ifdef QT_DEBUG
@@ -267,6 +284,9 @@ void MainWindow::on_masterPassButton_clicked()
         }
         storeMasterPassword(newPass);
         QMessageBox::information(this, "Success", "Master password set successfully!");
+        /* TODO
+         * JSON is unencrypted at this point, encrypt the unsecured JSON file
+         * Do the encryption here */
     }
     else { // If a master password exists, require authentication before setting a new one
         currentPass = QInputDialog::getText(this, "Current Master Password Required",
@@ -288,8 +308,12 @@ void MainWindow::on_masterPassButton_clicked()
             return;
         }
 
+        /* TODO
+         *  Decrypt the JSON using the previous password */
         storeMasterPassword(newPass);
         QMessageBox::information(this, "Success", "Master password updated successfully!");
+        /* TODO
+         * Encrypt the JSON using the new password here */
     }
 }
 
