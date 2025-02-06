@@ -177,6 +177,15 @@ void MainWindow::on_viDataButton_clicked()
             is_first_execution = false;
             allow_viewing = true;
         }
+        else {
+            std::filesystem::path filePath("masterpass.hash");
+            if (std::filesystem::exists(filePath)) {
+                QMessageBox::warning(this, "Wrong Password", "Master password is wrong");
+            }
+            else {
+                QMessageBox::warning(this, "No master password set", "Master password is not set");
+            }
+        }
     }
     if (allow_viewing) {
         if (!isVisible) {
