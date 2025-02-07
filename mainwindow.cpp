@@ -141,15 +141,6 @@ void saveToJson(const std::string &password, const std::string &comment) {
         }
     }
 
-    // QJsonArray jsonArray;
-    // if (file.open(QIODevice::ReadOnly)) {
-    //     // Read existing data
-    //     QByteArray jsonData = file.readAll();
-    //     QJsonDocument existingDoc = QJsonDocument::fromJson(jsonData);
-    //     jsonArray = existingDoc.array();
-    //     file.close();
-    // }
-
     // Add new entry
     QJsonObject newEntry;
     newEntry["password"] = QString::fromStdString(password);
@@ -157,7 +148,7 @@ void saveToJson(const std::string &password, const std::string &comment) {
     newEntry["comment"] = QString::fromStdString(comment);
     jsonArray.append(newEntry);
 
-    /* TODO
+    /* TODO DONE
      * Encrypt JSON using masterpass hash */
     // Write updated JSON
     // Convert JSON array to a QJsonDocument
@@ -185,11 +176,6 @@ void saveToJson(const std::string &password, const std::string &comment) {
 void loadFromJsonForDebug() {
     QString jsonFilePath = "passwords.json";
     QFile file(jsonFilePath);
-
-    /* TODO
-     * if password_hash file exists, we will decrypt the JSON
-     * if it doesn't, we will just read it as is.
-     * if password_hash exists, but JSON is not encrypted, read JSON as is. */
 
     if (!file.open(QIODevice::ReadOnly)) {
         qDebug() << "Failed to open JSON file.";
@@ -393,7 +379,7 @@ void MainWindow::on_masterPassButton_clicked()
             return;
         }
 
-        /* TODO
+        /* TODO DONE
          *  Decrypt the JSON using the previous password */
         // read the encrypted JSON file
         QByteArray decryptedData;
@@ -410,7 +396,7 @@ void MainWindow::on_masterPassButton_clicked()
         }
         storeMasterPassword(newPass);
         QMessageBox::information(this, "Success", "Master password updated successfully!");
-        /* TODO
+        /* TODO DONE
          * Encrypt the JSON using the new password here */
         QString hash = loadStoredMasterPasswordHash();
         QByteArray encryptedData = encryptData(decryptedData, hash);
