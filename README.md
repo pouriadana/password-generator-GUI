@@ -1,4 +1,4 @@
-# Password Generator Program with GUI
+# Password Manager/Generator Program with GUI
 
 
 ## Programming language & framework
