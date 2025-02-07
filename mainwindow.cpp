@@ -113,22 +113,42 @@ void saveToJson(const std::string &password, const std::string &comment) {
      * if password_hash file exists, we will decrypt the JSON
      * if it doesn't, we will just read it as is.
      * if password_hash exists, JSON is guaranteed to be encrypted */
-    std::filesystem::path jsonFile(MASTER_PASS_FILE);
-    if (std::filesystem::exists(jsonFile)) {
+    QByteArray jsonData;
+    QJsonArray jsonArray;
+
+    std::filesystem::path masterPassFile(MASTER_PASS_FILE);
+    bool isEncrypted = std::filesystem::exists(masterPassFile);
+    QString masterHash = loadStoredMasterPasswordHash();
+    if (isEncrypted) {
         // decrypt json
+        // Read and decrypt the JSON file
+        if (file.open(QIODevice::ReadOnly)) {
+            jsonData = file.readAll();
+            jsonData = decryptData(jsonData, masterHash); // Decrypt using the master password hash
+            file.close();
+
+            QJsonDocument existingDoc = QJsonDocument::fromJson(jsonData);
+            jsonArray = existingDoc.array();
+        }
     }
     else {
-        // read as is
+        // Read JSON as is (plaintext)
+        if (file.open(QIODevice::ReadOnly)) {
+            jsonData = file.readAll();
+            QJsonDocument existingDoc = QJsonDocument::fromJson(jsonData);
+            jsonArray = existingDoc.array();
+            file.close();
+        }
     }
 
-    QJsonArray jsonArray;
-    if (file.open(QIODevice::ReadOnly)) {
-        // Read existing data
-        QByteArray jsonData = file.readAll();
-        QJsonDocument existingDoc = QJsonDocument::fromJson(jsonData);
-        jsonArray = existingDoc.array();
-        file.close();
-    }
+    // QJsonArray jsonArray;
+    // if (file.open(QIODevice::ReadOnly)) {
+    //     // Read existing data
+    //     QByteArray jsonData = file.readAll();
+    //     QJsonDocument existingDoc = QJsonDocument::fromJson(jsonData);
+    //     jsonArray = existingDoc.array();
+    //     file.close();
+    // }
 
     // Add new entry
     QJsonObject newEntry;
@@ -140,13 +160,24 @@ void saveToJson(const std::string &password, const std::string &comment) {
     /* TODO
      * Encrypt JSON using masterpass hash */
     // Write updated JSON
+    // Convert JSON array to a QJsonDocument
+    QJsonDocument newDoc(jsonArray);
+    jsonData = newDoc.toJson();
+
+    // Encrypt JSON if a master password is set
+    if (isEncrypted) {
+        jsonData = encryptData(jsonData, masterHash);  // Encrypt using the stored hash
+    }
+
+    // Write updated (encrypted or plaintext) JSON to file
     if (file.open(QIODevice::WriteOnly)) {
-        QJsonDocument newDoc(jsonArray);
-        file.write(newDoc.toJson());
+        file.write(jsonData);
         file.close();
 #ifdef QT_DEBUG
         qDebug() << "Password saved successfully!";
 #endif
+    } else {
+        QMessageBox::critical(nullptr, "Error", "Failed to write to JSON file.");
     }
 }
 
@@ -166,6 +197,20 @@ void loadFromJsonForDebug() {
     }
 
     QByteArray jsonData = file.readAll();
+    file.close();
+
+    /* TODO DONE
+     * if password_hash file exists, we will decrypt the JSON
+     * if it doesn't, we will just read it as is.
+     * if password_hash exists, JSON is guaranteed to be encrypted */
+    std::filesystem::path filePath(MASTER_PASS_FILE);
+    if (std::filesystem::exists(filePath)) {
+        // decrypt the JSON
+        // Load stored master password hash
+        QString storedHash = loadStoredMasterPasswordHash();
+        qDebug() << "Before decryption for debug";
+        jsonData = decryptData(jsonData, storedHash);
+    }
     QJsonDocument doc = QJsonDocument::fromJson(jsonData);
 
     if (!doc.isArray()) {
@@ -247,6 +292,7 @@ void MainWindow::loadFromJsonForGUI() {
         // decrypt the JSON
         // Load stored master password hash
         QString storedHash = loadStoredMasterPasswordHash();
+        qDebug() << "Before decryption";
         jsonData = decryptData(jsonData, storedHash);
     }
     QJsonDocument doc = QJsonDocument::fromJson(jsonData);
@@ -349,10 +395,33 @@ void MainWindow::on_masterPassButton_clicked()
 
         /* TODO
          *  Decrypt the JSON using the previous password */
+        // read the encrypted JSON file
+        QByteArray decryptedData;
+        QFile jsonFile("passwords.json");
+        if (jsonFile.exists()) {
+            if (jsonFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                QByteArray jsonData = jsonFile.readAll();
+                jsonFile.close();
+
+                // decrypt it
+                QString hash = loadStoredMasterPasswordHash();
+                decryptedData = decryptData(jsonData, hash);
+            }
+        }
         storeMasterPassword(newPass);
         QMessageBox::information(this, "Success", "Master password updated successfully!");
         /* TODO
          * Encrypt the JSON using the new password here */
+        QString hash = loadStoredMasterPasswordHash();
+        QByteArray encryptedData = encryptData(decryptedData, hash);
+        // Overwrite the original JSON file with encrypted data
+        if (jsonFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            jsonFile.write(encryptedData);
+            jsonFile.close();
+        }
+        else {
+            QMessageBox::critical(this, "Error", "Failed to write encrypted JSON file.");
+        }
     }
 }
 
