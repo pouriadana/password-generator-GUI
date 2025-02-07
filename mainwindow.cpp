@@ -238,7 +238,7 @@ void MainWindow::loadFromJsonForGUI() {
     QByteArray jsonData = file.readAll();
     file.close();
 
-    /* TODO
+    /* TODO DONE
      * if password_hash file exists, we will decrypt the JSON
      * if it doesn't, we will just read it as is.
      * if password_hash exists, JSON is guaranteed to be encrypted */
@@ -249,15 +249,6 @@ void MainWindow::loadFromJsonForGUI() {
         QString storedHash = loadStoredMasterPasswordHash();
         jsonData = decryptData(jsonData, storedHash);
     }
-//     QFile file("passwords.json");
-//     if (!file.open(QIODevice::ReadOnly)) {
-// #ifdef QT_DEBUG
-//         qDebug() << "Failed to open JSON file.";
-// #endif
-//         return;
-//     }
-
-//     QByteArray jsonData = file.readAll();
     QJsonDocument doc = QJsonDocument::fromJson(jsonData);
 
     if (!doc.isArray()) {
@@ -311,7 +302,7 @@ void MainWindow::on_masterPassButton_clicked()
         }
         storeMasterPassword(newPass);
         QMessageBox::information(this, "Success", "Master password set successfully!");
-        /* TODO
+        /* TODO DONE
          * JSON is unencrypted at this point, encrypt the unsecured JSON file
          * Do the encryption here */
         QFile jsonFile("passwords.json");
