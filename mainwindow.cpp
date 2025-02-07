@@ -205,7 +205,7 @@ void MainWindow::on_viDataButton_clicked()
                 QMessageBox::warning(this, "Wrong Password", "Master password is wrong");
             }
             else {
-                QMessageBox::warning(this, "No master pas sword set", "Master password is not set");
+                QMessageBox::warning(this, "No master password set", "Master password is not set");
             }
         }
     }
