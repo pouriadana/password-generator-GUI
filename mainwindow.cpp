@@ -6,6 +6,7 @@
 #include <QDebug>
 #endif
 #include <QFile>
+#include <QFileDialog>
 #include <QGuiApplication>
 #include <QInputDialog>
 #include <QJsonDocument>
@@ -35,7 +36,6 @@ QString loadStoredMasterPasswordHash();                                         
 void storeMasterPassword(const QString &password);                                      // Function to store the master password securely
 QByteArray encryptData(const QByteArray &data, const QString &passwordHash);            // use XOR and master password's hash to encrypt JSON
 QByteArray decryptData(const QByteArray &encryptedData, const QString &passwordHash);   // use XOR and master password's hash to decrypt
-
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -458,4 +458,96 @@ QByteArray decryptData(const QByteArray &encryptedData, const QString &passwordH
     }
 
     return decryptedData;
+}
+
+void MainWindow::on_exportButton_clicked()
+{
+    exportPasswords();
+}
+
+void MainWindow::exportPasswords()
+{
+    // Ensure master password is set
+    if (!std::filesystem::exists(MASTER_PASS_FILE)) {
+        QMessageBox::warning(this, "Warning", "No master password set. Cannot export passwords.");
+        return;
+    }
+
+    // Ask for master password
+    QString enteredPass = QInputDialog::getText(this, "Enter Master Password",
+                                                "To export passwords, enter the master password:",
+                                                QLineEdit::Password);
+    if (enteredPass.isEmpty()) {
+        QMessageBox::warning(this, "Warning", "Master password cannot be empty.");
+        return;
+    }
+
+    // Verify master password
+    QString storedHash = loadStoredMasterPasswordHash();
+    if (hashPassword(enteredPass) != storedHash) {
+        QMessageBox::critical(this, "Error", "Incorrect master password.");
+        return;
+    }
+
+    // Open and decrypt passwords.json
+    QFile file("passwords.json");
+    if (!file.open(QIODevice::ReadOnly)) {
+        QMessageBox::critical(this, "Error", "Failed to open encrypted JSON file.");
+        return;
+    }
+
+    QByteArray encryptedData = file.readAll();
+    file.close();
+
+    QByteArray decryptedData = decryptData(encryptedData, storedHash);
+    QJsonDocument doc = QJsonDocument::fromJson(decryptedData);
+    if (!doc.isArray()) {
+        QMessageBox::critical(this, "Error", "Decryption failed or invalid JSON format.");
+        return;
+    }
+
+    QJsonArray jsonArray = doc.array();
+
+    // Read export format from UI dropdown
+    QString selectedFormat = ui->exportFormatComboBox->currentText();
+
+    // Ask user where to save the file
+    QString fileName = QFileDialog::getSaveFileName(this, "Save As",
+                                                    "", "Text File (*.txt);;CSV File (*.csv);;JSON File (*.json)");
+
+    if (fileName.isEmpty()) {
+        return;
+    }
+
+    QFile exportFile(fileName);
+    if (!exportFile.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, "Error", "Failed to create export file.");
+        return;
+    }
+
+    QTextStream out(&exportFile);
+
+    // Export based on selected format
+    if (selectedFormat == "TXT") {
+        for (const QJsonValue &value : jsonArray) {
+            QJsonObject obj = value.toObject();
+            out << "Password: " << obj["password"].toString() << "\n";
+            out << "Created At: " << obj["created_at"].toString() << "\n";
+            out << "Comment: " << obj["comment"].toString() << "\n";
+            out << "------------------------\n";
+        }
+    } else if (selectedFormat == "CSV") {
+        out << "Password,Created At,Comment\n";  // CSV Header
+        for (const QJsonValue &value : jsonArray) {
+            QJsonObject obj = value.toObject();
+            out << "\"" << obj["password"].toString() << "\",";
+            out << "\"" << obj["created_at"].toString() << "\",";
+            out << "\"" << obj["comment"].toString() << "\"\n";
+        }
+    } else if (selectedFormat == "JSON") {
+        exportFile.write(QJsonDocument(jsonArray).toJson(QJsonDocument::Indented));
+    }
+
+    exportFile.close();
+    QMessageBox::information(this, "Success", "Passwords exported successfully.");
 }
