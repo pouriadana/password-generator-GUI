@@ -553,3 +553,75 @@ void MainWindow::exportPasswords()
     exportFile.close();
     QMessageBox::information(this, "Success", "Passwords exported successfully.");
 }
+
+void MainWindow::on_importButton_clicked()
+{
+    MainWindow::importPasswords();
+}
+
+void MainWindow::importPasswords() {
+    // Prompt the user to select a file (JSON or CSV)
+    QString filePath = QFileDialog::getOpenFileName(this, "Import Passwords", "", "JSON Files (*.json);;CSV Files (*.csv)");
+    if (filePath.isEmpty()) {
+        return; // User canceled the file selection
+    }
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        QMessageBox::critical(this, "Error", "Failed to open the selected file.");
+        return;
+    }
+
+    QByteArray fileData = file.readAll();
+    file.close();
+
+    QJsonArray newDataset;
+
+    // Determine file type based on extension
+    if (filePath.endsWith(".json", Qt::CaseInsensitive)) {
+        QJsonDocument doc = QJsonDocument::fromJson(fileData);
+        if (!doc.isArray()) {
+            QMessageBox::critical(this, "Error", "Invalid JSON format.");
+            return;
+        }
+        newDataset = doc.array();
+    } else if (filePath.endsWith(".csv", Qt::CaseInsensitive)) {
+        QTextStream stream(fileData);
+        QStringList lines = QString(fileData).split("\n", Qt::SkipEmptyParts);
+
+        for (const QString &line : lines) {
+            QStringList fields = line.split(",");
+            if (fields.size() < 3) continue;  // Ensure valid format
+
+            QJsonObject entry;
+            entry["password"] = fields[0].trimmed();
+            entry["created_at"] = fields[1].trimmed();
+            entry["comment"] = fields[2].trimmed();
+
+            newDataset.append(entry);
+        }
+    } else {
+        QMessageBox::critical(this, "Error", "Unsupported file format. Please select a JSON or CSV file.");
+        return;
+    }
+
+    // Load stored master password hash for encryption
+    QString masterHash = loadStoredMasterPasswordHash();
+    if (masterHash.isEmpty()) {
+        QMessageBox::critical(this, "Error", "Master password not set. Cannot import encrypted data.");
+        return;
+    }
+
+    // Encrypt the new dataset
+    QByteArray encryptedData = encryptData(QJsonDocument(newDataset).toJson(), masterHash);
+
+    // Overwrite the existing JSON file with encrypted data
+    QFile jsonFile("passwords.json");
+    if (jsonFile.open(QIODevice::WriteOnly)) {
+        jsonFile.write(encryptedData);
+        jsonFile.close();
+        QMessageBox::information(this, "Success", "Passwords imported successfully and replaced old data.");
+    } else {
+        QMessageBox::critical(this, "Error", "Failed to write encrypted JSON file.");
+    }
+}
