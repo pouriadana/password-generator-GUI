@@ -17,6 +17,7 @@ public:
     MainWindow(QWidget *parent = nullptr);
     void loadFromJsonForGUI();
     void exportPasswords();
+    void importPasswords();
     ~MainWindow();
 
 private:
@@ -31,5 +32,6 @@ private slots:
     void on_manualSaveButton_clicked();
     void on_masterPassButton_clicked();
     void on_exportButton_clicked();
+    void on_importButton_clicked();
 };
 #endif // MAINWINDOW_H
