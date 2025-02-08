@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>440</width>
-    <height>489</height>
+    <height>530</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -249,6 +249,19 @@
     </property>
     <property name="text">
      <string>Export Passwords</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="importButton">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>450</y>
+      <width>131</width>
+      <height>29</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Import Passwords</string>
     </property>
    </widget>
   </widget>
