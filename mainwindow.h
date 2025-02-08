@@ -16,6 +16,7 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     void loadFromJsonForGUI();
+    void exportPasswords();
     ~MainWindow();
 
 private:
@@ -29,5 +30,6 @@ private slots:
     void on_viDataButton_clicked();
     void on_manualSaveButton_clicked();
     void on_masterPassButton_clicked();
+    void on_exportButton_clicked();
 };
 #endif // MAINWINDOW_H
