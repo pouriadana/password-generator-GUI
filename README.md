@@ -16,7 +16,11 @@
 * Save manually typed passwords with comments
 
 ## Screenshots
-![Picture 1](/screenshots/Screenshot_10.png)
+![Picture 1](/screenshots/Screenshot_13.png)
+
+---
+
+![Picture 2](/screenshots/Screenshot_14.png)
 
 ---
 
