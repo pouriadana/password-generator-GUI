@@ -11,6 +11,7 @@
 * Set a master password to view saved data
 * Encrypted JSON database for efficiency and security
 * Encryption/decryption is done soley by the user's master password
+* Export your data to .txt, .csv, and .json files
 * Intuitive user interface
 * Generate password with personalization capability
 * Save manually typed passwords with comments
