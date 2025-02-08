@@ -278,7 +278,9 @@ void MainWindow::loadFromJsonForGUI() {
         // decrypt the JSON
         // Load stored master password hash
         QString storedHash = loadStoredMasterPasswordHash();
+#ifdef QT_DEBUG
         qDebug() << "Before decryption";
+#endif
         jsonData = decryptData(jsonData, storedHash);
     }
     QJsonDocument doc = QJsonDocument::fromJson(jsonData);
